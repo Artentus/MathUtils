@@ -138,7 +138,7 @@ namespace Artentus
                 /// <param name="value"></param>
                 /// <param name="skalar"></param>
                 /// <returns></returns>
-                public static Matrix Multiplicate(Matrix value, double skalar)
+                public static Matrix Multiply(Matrix value, double skalar)
                 {
                     var m = new Matrix(value.ColumnCount, value.RowCount); //neue Matrix erstellen
 
@@ -150,12 +150,12 @@ namespace Artentus
                 }
 
                 /// <summary>
-                /// Multipliziert zwei Matrizen miteinander, sofern dies kompatibel sind.
+                /// Multipliziert zwei Matrizen miteinander, sofern diese kompatibel sind.
                 /// </summary>
                 /// <param name="left"></param>
                 /// <param name="right"></param>
                 /// <returns></returns>
-                public static Matrix Multiplicate(Matrix left, Matrix right)
+                public static Matrix Multiply(Matrix left, Matrix right)
                 {
                     if (left.ColumnCount == right.RowCount)
                     {
@@ -201,17 +201,17 @@ namespace Artentus
 
                 public static Matrix operator *(Matrix value, double skalar)
                 {
-                    return Multiplicate(value, skalar);
+                    return Multiply(value, skalar);
                 }
 
                 public static Matrix operator *(double skalar, Matrix value)
                 {
-                    return Multiplicate(value, skalar);
+                    return Multiply(value, skalar);
                 }
 
                 public static Matrix operator *(Matrix left, Matrix right)
                 {
-                    return Multiplicate(left, right);
+                    return Multiply(left, right);
                 }
 
                 public static Matrix operator +(Matrix left, Matrix right)

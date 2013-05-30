@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.CompilerServices;
 
 namespace Artentus
 {
@@ -9,68 +10,35 @@ namespace Artentus
     {
         namespace Math
         {
-            /// <summary>
-            /// Stellt Grundfunktionalität für Vektoren beliebiger Dimension bereit.
-            /// </summary>
-            public abstract class Vector : IEnumerable<double>, ICloneable, IEquatable<Vector>
+            public static class Vector
             {
-                protected abstract double[] GetCoordinates();
-
-                protected abstract void SetCoordinate(int index, double value);
-
                 /// <summary>
-                /// Gibt die Koordinate mit dem angegebenen Index zurück oder legt diese fest.
+                /// Listet alle Koordinaten dieses Vektors auf.
                 /// </summary>
-                /// <param name="index"></param>
                 /// <returns></returns>
-                public double this[int index]
+                public static IEnumerable<double> Coordinates(this IVector source)
                 {
-                    get
-                    {
-                        return GetCoordinates()[index];
-                    }
-                    set
-                    {
-                        if (index < Dimension)
-                            SetCoordinate(index, value);
-                        else //Index zu hoch
-                            throw new ArgumentException("Der angegebene Index war zu hoch für diesen Vektor. Er muss kleiner sein, als die Dimension des Vektors.");
-                    }
+                    //alle Koordinaten ermittlen
+                    for (int i = 0; i < source.Dimension; i++)
+                        yield return source[i];
                 }
 
                 /// <summary>
                 /// Berechnet die euklidische Länge dieses Vektors.
                 /// </summary>
-                public double Length
-                {
-                    get
-                    {
-                        var coords = GetCoordinates();
-                        return System.Math.Sqrt(coords.Sum(val => val * val)); //Phytagoras
-                    }
-                }
-
-                /// <summary>
-                /// Gibt die Dimension dieses Vektors an.
-                /// </summary>
-                public int Dimension
-                {
-                    get
-                    {
-                        return GetCoordinates().Length;
-                    }
+                public static double Length(this IVector source)
+                {             
+                    return System.Math.Sqrt(source.Coordinates().Sum(val => val * val)); //Phytagoras
                 }
 
                 /// <summary>
                 /// Berechnet die Entfernung von diesm Vektor zu einem anderen.
-                /// Wenn die Vektoren verschiedene Dimensionen besitzen, wird die höhere der beiden zur Berechnung verwendet.
                 /// </summary>
-                /// <param name="v"></param>
                 /// <returns></returns>
-                public double GetDistanceTo(Vector v)
+                public static double DistanceTo(this IVector first, IVector second)
                 {
                     //Dimension zur Berechnug bestimmen und Array in richtiger Größe anlegen
-                    var maxDimension = System.Math.Max(Dimension, v.Dimension);
+                    var maxDimension = System.Math.Max(first.Dimension, second.Dimension);
                     var values = new double[maxDimension];
 
                     //Werte aller Dimensionen berechnen
@@ -78,11 +46,11 @@ namespace Artentus
                     {
                         var value = 0.0;
 
-                        if (Dimension > i)
-                            value = this[i];
+                        if (first.Dimension > i)
+                            value = first[i];
 
-                        if (v.Dimension > i)
-                            value -= v[i];
+                        if (second.Dimension > i)
+                            value -= second[i];
 
                         values[i] = value;
                     }
@@ -95,12 +63,12 @@ namespace Artentus
                 /// Stellt diesen Vektor als Matrix dar, wobei die Koordinaten in einer Zeile angeordnet werden.
                 /// </summary>
                 /// <returns></returns>
-                public Matrix ToHorizontalMatrix()
+                public static Matrix ToHorizontalMatrix(this IVector source)
                 {
-                    var m = new Matrix(Dimension, 1); //Matrix erstellen
+                    var m = new Matrix(source.Dimension, 1); //Matrix erstellen
 
-                    for (int i = 0; i < Dimension; i++)
-                        m[i, 0] = this[i]; //Koordinate der Matrix zuweisen
+                    for (int i = 0; i < source.Dimension; i++)
+                        m[i, 0] = source[i]; //Koordinate der Matrix zuweisen
 
                     return m;
                 }
@@ -109,94 +77,81 @@ namespace Artentus
                 /// Stellt diesen Vektor als Matrix dar, wobei die Koordinaten in einer Spalte angeordnet werden.
                 /// </summary>
                 /// <returns></returns>
-                public Matrix ToVerticalMatrix()
+                public static Matrix ToVerticalMatrix(this IVector source)
                 {
-                    var m = new Matrix(1, Dimension); //Matrix erstellen
+                    var m = new Matrix(1, source.Dimension); //Matrix erstellen
 
-                    for (int i = 0; i < Dimension; i++)
-                        m[0, i] = this[i]; //Koordinate der Matrix zuweisen
+                    for (int i = 0; i < source.Dimension; i++)
+                        m[0, i] = source[i]; //Koordinate der Matrix zuweisen
 
                     return m;
                 }
 
                 /// <summary>
-                /// Normaliziert diesen Vektor.
+                /// Normalisiert diesen Vektor.
                 /// </summary>
-                public void Normalize()
+                public static IVector Normalize(this IVector source)
                 {
-                    var f = 1.0 / Length; //Skalarfaktor
-                    var coords = GetCoordinates();
+                    var f = 1.0 / source.Length(); //Skalarfaktor
 
-                    for (int i = 0; i < coords.Length; i++)
-                        SetCoordinate(i, coords[i] * f); //Koordinate mit Faktor multiplizieren
+                    for (int i = 0; i < source.Dimension; i++)
+                        source[i] *= f; //Koordinate mit Faktor multiplizieren
+
+                    return source;
                 }
 
-                public IEnumerator<double> GetEnumerator()
+                /// <summary>
+                /// Multipliziert zwei Vektoren miteinander.
+                /// </summary>
+                /// <returns></returns>
+                public static IVector Multiply(IVector left, IVector right)
                 {
-                    return new VectorEnumerator(this);
+                    IVector v;
+
+                    //neuen Vektor mit größter Dimension erzeugen
+                    if (left.Dimension >= right.Dimension)
+                        v = left;
+                    else
+                        v = right;
+
+                    //Dimensionen multiplizieren
+                    for (int i = 0; i < v.Dimension; i++)
+                    {
+                        if (left.Dimension > i && right.Dimension > i)
+                            v[i] = left[i] * right[i];
+                        else //mindestens eine Dimension 0
+                            v[i] = 0.0;
+                    }
+
+                    return v;
                 }
 
-                System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+                /// <summary>
+                /// Multipliziert einen Vektor mit einem Skalarfaktor.
+                /// </summary>
+                /// <returns></returns>
+                public static IVector Multiply(this IVector value, double skalar)
                 {
-                    return new VectorEnumerator(this);
-                }
+                    //in allen Dimensionen multiplizieren
+                    for (int i = 0; i < value.Dimension; i++)
+                        value[i] *= skalar;
 
-                internal class VectorEnumerator : IEnumerator<double>
-                {
-                    private Vector v;
-                    private int index;
-
-                    internal VectorEnumerator(Vector v)
-                    {
-                        this.v = v;
-                        index = -1;
-                    }
-
-                    public double Current
-                    {
-                        get
-                        {
-                            return v[index];
-                        }
-                    }
-
-                    public void Dispose() { }
-
-                    object System.Collections.IEnumerator.Current
-                    {
-                        get 
-                        {
-                            return v[index];
-                        }
-                    }
-
-                    public bool MoveNext()
-                    {
-                        index++;
-                        return index < v.Dimension;
-                    }
-
-                    public void Reset()
-                    {
-                        index = -1;
-                    }
+                    return value;
                 }
 
                 /// <summary>
                 /// Addiert zwei Vektoren miteinander.
                 /// </summary>
-                /// <param name="left"></param>
-                /// <param name="right"></param>
                 /// <returns></returns>
-                public static Vector Add(Vector left, Vector right)
+                public static IVector Add(IVector left, IVector right)
                 {
-                    Vector v;
+                    IVector v;
 
                     //neuen Vektor mit größter Dimension erzeugen
                     if (left.Dimension >= right.Dimension)
-                        v = (Vector)left.Clone();
+                        v = left;
                     else
-                        v = (Vector)right.Clone();
+                        v = right;
 
                     //alle Dimensionen addieren
                     for (int i = 0; i < v.Dimension; i++)
@@ -216,18 +171,16 @@ namespace Artentus
                 /// <summary>
                 /// Subtrahiert zwei Vektoren voneinander.
                 /// </summary>
-                /// <param name="left"></param>
-                /// <param name="right"></param>
                 /// <returns></returns>
-                public static Vector Subtract(Vector left, Vector right)
+                public static IVector Subtract(IVector left, IVector right)
                 {
-                    Vector v;
+                    IVector v;
 
                     //neuen Vektor mit größter Dimension erzeugen
                     if (left.Dimension >= right.Dimension)
-                        v = (Vector)left.Clone();
+                        v = left;
                     else
-                        v = (Vector)right.Clone();
+                        v = right;
 
                     //Dimensionen subtrahieren
                     for (int i = 0; i < v.Dimension; i++)
@@ -245,60 +198,12 @@ namespace Artentus
                 }
 
                 /// <summary>
-                /// Multipliziert zwei Vektoren miteinander.
-                /// </summary>
-                /// <param name="left"></param>
-                /// <param name="right"></param>
-                /// <returns></returns>
-                public static Vector Multiplicate(Vector left, Vector right)
-                {
-                    Vector v;
-
-                    //neuen Vektor mit größter Dimension erzeugen
-                    if (left.Dimension >= right.Dimension)
-                        v = (Vector)left.Clone();
-                    else
-                        v = (Vector)right.Clone();
-
-                    //Dimensionen multiplizieren
-                    for (int i = 0; i < v.Dimension; i++)
-                    {
-                        if (left.Dimension > i && right.Dimension > i)
-                            v[i] = left[i] * right[i];
-                        else //mindestens eine Dimension 0
-                            v[i] = 0.0;
-                    }
-
-                    return v;
-                }
-
-                /// <summary>
-                /// Multipliziert einen Vektor mit einem Skalarfaktor.
-                /// </summary>
-                /// <param name="value"></param>
-                /// <param name="skalar"></param>
-                /// <returns></returns>
-                public static Vector Multiplicate(Vector value, double skalar)
-                {
-                    var v = (Vector)value.Clone(); //Vektor klonen
-                    var coords = value.GetCoordinates();
-
-                    //in allen Dimensionen multiplizieren
-                    for (int i = 0; i < value.Dimension; i++)
-                        v[i] = coords[i] * skalar;
-
-                    return v;
-                }
-
-                /// <summary>
                 /// Berechnet das Skalarprodukt aus zwei Vektoren.
                 /// </summary>
-                /// <param name="left"></param>
-                /// <param name="right"></param>
                 /// <returns></returns>
-                public static double GetSkalarProduct(Vector left, Vector right)
+                public static double GetSkalarProduct(IVector left, IVector right)
                 {
-                    var v = left * right; //Vektoren multiplizieren
+                    var v = Vector.Multiply(left, right); //Vektoren multiplizieren
                     var val = 0.0;
 
                     //Koordinaten zusammenaddieren
@@ -306,63 +211,6 @@ namespace Artentus
                         val += v[i];
 
                     return val;
-                }
-
-                public static Vector operator +(Vector left, Vector right)
-                {
-                    return Add(left, right);
-                }
-
-                public static Vector operator -(Vector left, Vector right)
-                {
-                    return Subtract(left, right);
-                }
-
-                public static Vector operator *(Vector left, Vector right)
-                {
-                    return Multiplicate(left, right);
-                }
-
-                public static Vector operator *(Vector value, double skalar)
-                {
-                    return Multiplicate(value, skalar);
-                }
-
-                public static Vector operator *(double skalar, Vector value)
-                {
-                    return Multiplicate(value, skalar);
-                }
-
-                public abstract object Clone();
-
-                public bool Equals(Vector other)
-                {
-                    //höchste Dimension ermitteln
-                    var maxDimension = System.Math.Max(Dimension, other.Dimension);
-
-                    //alle Dimensionen vergleichen
-                    for (int i = 0; i < maxDimension; i++)
-                    {
-                        var val1 = 0.0;
-                        var val2 = 0.0;
-
-                        if (i < Dimension)
-                            val1 = this[i];
-
-                        if (i < other.Dimension)
-                            val2 = other[i];
-
-                        if (val1 != val2)
-                            return false; //Dimensionen unterscheiden sich
-                    }
-
-                    //keine Dimension unterschiedlich
-                    return true;
-                }
-
-                public override string ToString()
-                {
-                    return string.Concat(new object[] { '{', string.Join(", ", GetCoordinates().Select(val => val.ToString()).ToArray()), '}' });
                 }
             }
         }

@@ -196,23 +196,6 @@ namespace Artentus
                 }
 
                 /// <summary>
-                /// Projeziert einen dreidimensionalen Punkt in die zweite Dimension.
-                /// </summary>
-                /// <param name="point"></param>
-                /// <param name="viewPosition"></param>
-                /// <returns></returns>
-                public static Vector3 GetPerspectiveProjection(Vector4 point, Vector3 viewPosition)
-                {
-                    var transformationMatrix = Matrix4x4.GetIdentity();
-                    transformationMatrix[3, 3] = 0;
-                    transformationMatrix[2, 0] = -(viewPosition.X / viewPosition.Z);
-                    transformationMatrix[2, 1] = -(viewPosition.Y / viewPosition.Z);
-                    transformationMatrix[2, 3] = 1.0 / viewPosition.Z;
-                    var v = point * transformationMatrix;
-                    return new Vector3(v.X / v.W, v.Y / v.W, v.Z);
-                }
-
-                /// <summary>
                 /// Schränkt eine Zahl auf einen bestimmten Wertebreich ein.
                 /// </summary>
                 /// <param name="value"></param>

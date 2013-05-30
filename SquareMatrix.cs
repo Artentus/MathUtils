@@ -17,7 +17,19 @@ namespace Artentus
                 /// <summary>
                 /// Gibt die Größe dieser quadratischen Matrix an.
                 /// </summary>
-                public int Size { get; private set; }
+                public int Size { get; protected set; }
+
+                /// <summary>
+                /// Gibt an, ob diese quadratische Matrix singulär ist.
+                /// Eine singuläre Matrix besitzt keine Inverse.
+                /// </summary>
+                public bool IsSingular
+                {
+                    get
+                    {
+                        return GetDeterminant() == 0;
+                    }
+                }
 
                 /// <summary>
                 /// Erstellt eine neue quadratische Matrix.
@@ -129,22 +141,24 @@ namespace Artentus
                 /// <returns></returns>
                 public SquareMatrix GetInverse()
                 {
+                    if (IsSingular)
+                        throw new InvalidOperationException("Von dieser Matrix kann keine Inverse gebildet werden, da sie singulär ist:");
                     return (1 / GetDeterminant()) * GetAdjugate();
                 }
 
                 public static SquareMatrix operator *(SquareMatrix value, double skalar)
                 {
-                    return SquareMatrix.FromMatrix(Multiplicate(value, skalar));
+                    return SquareMatrix.FromMatrix(Multiply(value, skalar));
                 }
 
                 public static SquareMatrix operator *(double skalar, SquareMatrix value)
                 {
-                    return SquareMatrix.FromMatrix(Multiplicate(value,skalar));
+                    return SquareMatrix.FromMatrix(Multiply(value,skalar));
                 }
 
                 public static SquareMatrix operator *(SquareMatrix left, SquareMatrix right)
                 {
-                    return SquareMatrix.FromMatrix(Multiplicate(left, right));
+                    return SquareMatrix.FromMatrix(Multiply(left, right));
                 }
 
                 public static SquareMatrix operator +(SquareMatrix left, SquareMatrix right)

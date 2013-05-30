@@ -51,6 +51,24 @@ namespace Artentus
                 }
 
                 /// <summary>
+                /// Berechnet die Adjunkte zu dieser Matrix4x4.
+                /// </summary>
+                /// <returns></returns>
+                public new Matrix4x4 GetAdjugate()
+                {
+                    return Matrix4x4.FromMatrix(base.GetAdjugate());
+                }
+
+                /// <summary>
+                /// Berechnet die invertierte Matrix dieser Matrix4x4.
+                /// </summary>
+                /// <returns></returns>
+                public new Matrix4x4 GetInverse()
+                {
+                    return Matrix4x4.FromMatrix(base.GetInverse());
+                }
+
+                /// <summary>
                 /// Erstellt eine Matrix, die eine Rotation um die X-Achse darstellt.
                 /// </summary>
                 /// <param name="angle"></param>
@@ -212,17 +230,17 @@ namespace Artentus
 
                 public static Matrix4x4 operator *(Matrix4x4 value, double skalar)
                 {
-                    return Matrix4x4.FromMatrix(Multiplicate(value, skalar));
+                    return Matrix4x4.FromMatrix(Multiply(value, skalar));
                 }
 
                 public static Matrix4x4 operator *(double skalar, Matrix4x4 value)
                 {
-                    return Matrix4x4.FromMatrix(Multiplicate(value, skalar));
+                    return Matrix4x4.FromMatrix(Multiply(value, skalar));
                 }
 
                 public static Matrix4x4 operator *(Matrix4x4 left, Matrix4x4 right)
                 {
-                    return Matrix4x4.FromMatrix(Multiplicate(left, right));
+                    return Matrix4x4.FromMatrix(Multiply(left, right));
                 }
 
                 public static Vector4 operator *(Matrix4x4 m, Vector4 v)
