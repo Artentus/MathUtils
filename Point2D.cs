@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 
 namespace Artentus
 {
@@ -9,10 +10,7 @@ namespace Artentus
     {
         namespace Math
         {
-            /// <summary>
-            /// Ein zweidimensionaler Vektor.
-            /// </summary>
-            public struct Vector2 : IVector
+            public struct Point2D : IVector
             {
                 /// <summary>
                 /// Die X-Koordinate.
@@ -65,11 +63,9 @@ namespace Artentus
                 }
 
                 /// <summary>
-                /// Erstellt einen neuen Vector2.
+                /// Erstellt einen neuen Point2D.
                 /// </summary>
-                /// <param name="x"></param>
-                /// <param name="y"></param>
-                public Vector2(double x, double y)
+                public Point2D(double x, double y)
                     : this()
                 {
                     X = x;
@@ -77,25 +73,60 @@ namespace Artentus
                 }
 
                 /// <summary>
-                /// Erstellt einen neuen Vector2.
+                /// Erstellt einen neuen Point2D.
                 /// </summary>
-                /// <param name="v"></param>
-                public Vector2(Vector2 v)
+                public Point2D(Point2D p)
                     : this()
                 {
-                    X = v.X;
-                    Y = v.Y;
+                    X = p.X;
+                    Y = p.Y;
                 }
 
                 /// <summary>
-                /// Berechnet das Vektorprodukt aus zwei Vektoren.
+                /// Erstellt einen neuen Point2D.
                 /// </summary>
-                /// <param name="left"></param>
-                /// <param name="right"></param>
-                /// <returns></returns>
-                public static double GetVectorProduct(Vector2 left, Vector2 right)
+                public Point2D(Point p)
+                    : this()
                 {
-                    return left.X * right.Y - left.Y * right.X;
+                    X = p.X;
+                    Y = p.Y;
+                }
+
+                /// <summary>
+                /// Erstellt einen neuen Point2D.
+                /// </summary>
+                public Point2D(PointF p)
+                    : this()
+                {
+                    X = p.X;
+                    Y = p.Y;
+                }
+
+                /// <summary>
+                /// Konvertiert diesen Point2D zu einem Point.
+                /// </summary>
+                /// <returns></returns>
+                public Point ToPoint()
+                {
+                    return new Point((int)X, (int)Y);
+                }
+
+                /// <summary>
+                /// Konvertiert diesen Point2D zu einem PointF.
+                /// </summary>
+                /// <returns></returns>
+                public PointF ToPointF()
+                {
+                    return new PointF((float)X, (float)Y);
+                }
+
+                /// <summary>
+                /// Konvertiert diesen Point2D in einen Vector2.
+                /// </summary>
+                /// <returns></returns>
+                public Vector2 ToVector2()
+                {
+                    return new Vector2(X, Y);
                 }
 
                 public IEnumerator<double> GetEnumerator()
@@ -108,34 +139,30 @@ namespace Artentus
                     return new VectorEnumerator(this);
                 }
 
-                public static Vector2 operator +(Vector2 left, Vector2 right)
+                public static Point2D operator +(Point2D left, Point2D right)
                 {
-                    return (Vector2)Vector.Add(left, right);
+                    return (Point2D)Vector.Add(left, right);
                 }
 
-                public static Vector2 operator -(Vector2 left, Vector2 right)
+                public static Point2D operator +(Point2D left, Vector2 right)
                 {
-                    return (Vector2)Vector.Subtract(left, right);
+                    return (Point2D)Vector.Add(left, right);
                 }
 
-                public static Vector2 operator -(Vector2 value)
+                public static Point2D operator -(Point2D left, Vector2 right)
                 {
-                    return new Vector2(-value.X, -value.Y);
+                    return (Point2D)Vector.Subtract(left, right);
                 }
 
-                public static Vector2 operator *(Vector2 left, Vector2 right)
+                public static Vector2 operator -(Point2D left, Point2D right)
                 {
-                    return (Vector2)Vector.Multiply(left, right);
+                    var p = (Point2D)Vector.Subtract(left, right);
+                    return new Vector2(p.X, p.Y);
                 }
 
-                public static Vector2 operator *(Vector2 value, double skalar)
+                public static Point2D operator -(Point2D value)
                 {
-                    return (Vector2)Vector.Multiply(value, skalar);
-                }
-
-                public static Vector2 operator *(double skalar, Vector2 value)
-                {
-                    return (Vector2)Vector.Multiply(value, skalar);
+                    return new Point2D(-value.X, -value.Y);
                 }
             }
         }

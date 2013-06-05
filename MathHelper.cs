@@ -61,7 +61,7 @@ namespace Artentus
                 /// <param name="p1"></param>
                 /// <param name="p2"></param>
                 /// <returns></returns>
-                public static double GetGradient(PointD p1, PointD p2)
+                public static double GetGradient(Point2D p1, Point2D p2)
                 {
                     return (p1.Y - p2.Y) / (p1.X - p2.X); //Steigungssatz
                 }
@@ -78,89 +78,25 @@ namespace Artentus
                 }
 
                 /// <summary>
-                /// Berechnet den Arcustangens.
-                /// Hierbei werden im Vergleich zu Math.Atan keine negativen Winkel ausgegeben.
-                /// </summary>
-                /// <param name="gradient"></param>
-                /// <returns></returns>
-                public static double Atan(double gradient)
-                {
-                    //Winkel über Arcustangens berechnen
-                    var at = System.Math.Atan(gradient);
-
-                    //negative Winkel von Atan bei gradient < 0 umrechnen
-                    if (gradient < 0)
-                        at = System.Math.PI + at;
-
-                    return at;
-                }
-
-                /// <summary>
                 /// Berechnet den Arcustangens aus der Steigung zwischen zwei Punkten.
-                /// Hierbei werden im Vergleich zu Math.Atan keine negativen Winkel ausgegeben.
                 /// </summary>
                 /// <param name="p1"></param>
                 /// <param name="p2"></param>
                 /// <returns></returns>
-                public static double Atan(PointD p1, PointD p2)
+                public static double Atan(Point2D p1, Point2D p2)
                 {
-                    var gradient = GetGradient(p1, p2);
-                    return Atan(gradient);
-                }
-
-                /// <summary>
-                /// Berechnet den Arcustangens.
-                /// Hierbei werden im Vergleich zu Math.Atan keine negativen Winkel ausgegeben.
-                /// </summary>
-                /// <param name="gradient"></param>
-                /// <returns></returns>
-                public static float Atan(float gradient)
-                {
-                    return (float)Atan((double)gradient);
+                    return System.Math.Atan2(p2.Y - p1.Y, p2.X - p1.X);
                 }
 
                 /// <summary>
                 /// Berechnet den Arcustangens aus der Steigung zwischen zwei Punkten.
-                /// Hierbei werden im Vergleich zu Math.Atan keine negativen Winkel ausgegeben.
                 /// </summary>
                 /// <param name="p1"></param>
                 /// <param name="p2"></param>
                 /// <returns></returns>
                 public static float Atan(PointF p1, PointF p2)
                 {
-                    var gradient = GetGradient(p1, p2);
-                    return Atan(gradient);
-                }
-
-                /// <summary>
-                /// Berechnet der Winkel einer Geraden, die durch zwei Punkte beschrieben wird, zur X-Achse.
-                /// Der Wertebereich liegt hierbei zwischen 0 und 2Pi (bei Atan nur zwischen 0 ind Pi).
-                /// </summary>
-                /// <param name="p1"></param>
-                /// <param name="p2"></param>
-                /// <returns></returns>
-                public static double GetAngle(PointD p1, PointD p2)
-                {
-                    //"echten" Winkel berechnen
-                    var at = Atan(p1, p2);
-
-                    //im 3. und 4. Quadranten Pi aufaddieren
-                    if ((p1.Y > p2.Y) || (p1.Y == p2.Y && p1.X > p2.X))
-                        at += System.Math.PI;
-
-                    return at;
-                }
-
-                /// <summary>
-                /// Berechnet der Winkel einer Geraden, die durch zwei Punkte beschrieben wird, zur X-Achse.
-                /// Der Wertebereich liegt hierbei zwischen 0 und 2Pi (bei Atan nur zwischen 0 ind Pi).
-                /// </summary>
-                /// <param name="p1"></param>
-                /// <param name="p2"></param>
-                /// <returns></returns>
-                public static float GetAngle(PointF p1, PointF p2)
-                {
-                    return (float)GetAngle(p1.ToPointD(), p2.ToPointD());
+                    return (float)System.Math.Atan2(p2.Y - p1.Y, p2.X - p1.X);
                 }
 
                 /// <summary>
@@ -170,7 +106,7 @@ namespace Artentus
                 /// <param name="angle">Der Winkel, in dem der Punkt zur X-Achse liegt.</param>
                 /// <param name="radius">Der Radius des Kreises.</param>
                 /// <returns></returns>
-                public static PointD GetPointOnCircle(PointD center, double angle, double radius)
+                public static Point2D GetPointOnCircle(Point2D center, double angle, double radius)
                 {
                     //Winkelfunktionen anwenden
                     var sin = System.Math.Sin(angle);
@@ -178,9 +114,9 @@ namespace Artentus
 
                     //Koordinaten berechnen
                     var x = center.X + cos * radius;
-                    var y = center.X + sin * radius;
+                    var y = center.Y + sin * radius;
 
-                    return new PointD(x, y);
+                    return new Point2D(x, y);
                 }
 
                 /// <summary>
@@ -192,7 +128,7 @@ namespace Artentus
                 /// <returns></returns>
                 public static PointF GetPointOnCircle(PointF center, float angle, float radius)
                 {
-                    return GetPointOnCircle(center, (double)angle, (double)radius).ToPointF();
+                    return GetPointOnCircle(new Point2D(center.X, center.Y), (double)angle, (double)radius).ToPointF();
                 }
 
                 /// <summary>

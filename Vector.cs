@@ -10,6 +10,9 @@ namespace Artentus
     {
         namespace Math
         {
+            /// <summary>
+            /// Stellt Funktionen zum Arbeiten mit Vektoren bereit.
+            /// </summary>
             public static class Vector
             {
                 /// <summary>
@@ -156,10 +159,10 @@ namespace Artentus
                     //alle Dimensionen addieren
                     for (int i = 0; i < v.Dimension; i++)
                     {
-                        v[i] = 0.0;
-
                         if (left.Dimension > i)
-                            v[i] += left[i];
+                            v[i] = left[i];
+                        else
+                            v[i] = 0;
 
                         if (right.Dimension > i)
                             v[i] += right[i];
@@ -185,10 +188,10 @@ namespace Artentus
                     //Dimensionen subtrahieren
                     for (int i = 0; i < v.Dimension; i++)
                     {
-                        v[i] = 0.0;
-
                         if (left.Dimension > i)
-                            v[i] += left[i];
+                            v[i] = left[i];
+                        else
+                            v[i] = 0;
 
                         if (right.Dimension > i)
                             v[i] -= right[i];
@@ -201,7 +204,7 @@ namespace Artentus
                 /// Berechnet das Skalarprodukt aus zwei Vektoren.
                 /// </summary>
                 /// <returns></returns>
-                public static double GetSkalarProduct(IVector left, IVector right)
+                public static double GetScalarProduct(IVector left, IVector right)
                 {
                     var v = Vector.Multiply(left, right); //Vektoren multiplizieren
                     var val = 0.0;

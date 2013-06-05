@@ -9,10 +9,7 @@ namespace Artentus
     {
         namespace Math
         {
-            /// <summary>
-            /// Ein zweidimensionaler Vektor.
-            /// </summary>
-            public struct Vector2 : IVector
+            public struct Point3D : IVector
             {
                 /// <summary>
                 /// Die X-Koordinate.
@@ -25,9 +22,14 @@ namespace Artentus
                 public double Y { get; set; }
 
                 /// <summary>
-                /// Gibt 2 zurück.
+                /// Die Z-Koordinate.
                 /// </summary>
-                public int Dimension { get { return 2; } }
+                public double Z { get; set; }
+
+                /// <summary>
+                /// Gibt 3 zurück.
+                /// </summary>
+                public int Dimension { get { return 3; } }
 
                 /// <summary>
                 /// Gibt die Koordinate an dem angegebenen Index zurück oder legt diese fest.
@@ -44,8 +46,10 @@ namespace Artentus
                                 return X;
                             case 1:
                                 return Y;
+                            case 2:
+                                return Z;
                             default:
-                                throw new ArgumentException("Der angegebene Index war für einen zweidimensionalen Vektor zu hoch.");
+                                throw new ArgumentException("Der angegebene Index war für einen dreidimensionalen Vektor zu hoch.");
                         }
                     }
                     set
@@ -58,44 +62,44 @@ namespace Artentus
                             case 1:
                                 Y = value;
                                 break;
+                            case 2:
+                                Z = value;
+                                break;
                             default:
-                                throw new ArgumentException("Der angegebene Index war für einen zweidimensionalen Vektor zu hoch.");
+                                throw new ArgumentException("Der angegebene Index war für einen dreidimensionalen Vektor zu hoch.");
                         }
                     }
                 }
 
                 /// <summary>
-                /// Erstellt einen neuen Vector2.
+                /// Erstellt einen neuen Point3D.
                 /// </summary>
-                /// <param name="x"></param>
-                /// <param name="y"></param>
-                public Vector2(double x, double y)
+                public Point3D(double x, double y, double z)
                     : this()
                 {
                     X = x;
                     Y = y;
+                    Z = z;
                 }
 
                 /// <summary>
-                /// Erstellt einen neuen Vector2.
+                /// Erstellt einen neuen Point3D.
                 /// </summary>
-                /// <param name="v"></param>
-                public Vector2(Vector2 v)
+                public Point3D(Point3D p)
                     : this()
                 {
-                    X = v.X;
-                    Y = v.Y;
+                    X = p.X;
+                    Y = p.Y;
+                    Z = p.Z;
                 }
 
                 /// <summary>
-                /// Berechnet das Vektorprodukt aus zwei Vektoren.
+                /// Konvertiert diesen Point3D in einen Vector3.
                 /// </summary>
-                /// <param name="left"></param>
-                /// <param name="right"></param>
                 /// <returns></returns>
-                public static double GetVectorProduct(Vector2 left, Vector2 right)
+                public Vector3 ToVector3()
                 {
-                    return left.X * right.Y - left.Y * right.X;
+                    return new Vector3(X, Y, Z);
                 }
 
                 public IEnumerator<double> GetEnumerator()
@@ -108,34 +112,30 @@ namespace Artentus
                     return new VectorEnumerator(this);
                 }
 
-                public static Vector2 operator +(Vector2 left, Vector2 right)
+                public static Point3D operator +(Point3D left, Point3D right)
                 {
-                    return (Vector2)Vector.Add(left, right);
+                    return (Point3D)Vector.Add(left, right);
                 }
 
-                public static Vector2 operator -(Vector2 left, Vector2 right)
+                public static Point3D operator +(Point3D left, Vector3 right)
                 {
-                    return (Vector2)Vector.Subtract(left, right);
+                    return (Point3D)Vector.Add(left, right);
                 }
 
-                public static Vector2 operator -(Vector2 value)
+                public static Point3D operator -(Point3D left, Vector3 right)
                 {
-                    return new Vector2(-value.X, -value.Y);
+                    return (Point3D)Vector.Subtract(left, right);
                 }
 
-                public static Vector2 operator *(Vector2 left, Vector2 right)
+                public static Vector3 operator -(Point3D left, Point3D right)
                 {
-                    return (Vector2)Vector.Multiply(left, right);
+                    var p = (Point3D)Vector.Subtract(left, right);
+                    return new Vector3(p.X, p.Y, p.Z);
                 }
 
-                public static Vector2 operator *(Vector2 value, double skalar)
+                public static Point3D operator -(Point3D value)
                 {
-                    return (Vector2)Vector.Multiply(value, skalar);
-                }
-
-                public static Vector2 operator *(double skalar, Vector2 value)
-                {
-                    return (Vector2)Vector.Multiply(value, skalar);
+                    return new Point3D(-value.X, -value.Y, -value.Z);
                 }
             }
         }

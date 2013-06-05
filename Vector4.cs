@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 
 namespace Artentus
 {
@@ -119,7 +120,7 @@ namespace Artentus
                 /// <param name="deviceSize">Die Abmessungen der Zeichenfläche.</param>
                 /// <param name="viewPoint">Der Betrachterpunkt.</param>
                 /// <returns></returns>
-                public Vector3 ProjectPerspective(SizeD deviceSize, Vector3 viewPoint)
+                public Vector3 ProjectPerspective(Size deviceSize, Vector3 viewPoint)
                 {
                     var perspectiveMatrix = Matrix4x4.GetIdentity();
                     perspectiveMatrix[3, 3] = 0;
@@ -129,9 +130,9 @@ namespace Artentus
 
                     var vectorInAspect = this;
                     if (deviceSize.Width > deviceSize.Height)
-                        vectorInAspect.Y *= deviceSize.Width / deviceSize.Height;
+                        vectorInAspect.Y *= (double)deviceSize.Width / (double)deviceSize.Height;
                     else
-                        vectorInAspect.X *= deviceSize.Height / deviceSize.Width;
+                        vectorInAspect.X *= (double)deviceSize.Height / (double)deviceSize.Width;
 
                     var perspectiveVector = vectorInAspect * perspectiveMatrix;
                     perspectiveVector.X /= perspectiveVector.W;
@@ -149,7 +150,7 @@ namespace Artentus
                 /// </summary>
                 /// <param name="deviceSize">Die Abmessungen der Zeichenfläche.</param>
                 /// <returns></returns>
-                public Vector3 ProjectPerspective(SizeD deviceSize)
+                public Vector3 ProjectPerspective(Size deviceSize)
                 {
                     return ProjectPerspective(deviceSize, new Vector3(0, 0, 1));
                 }
