@@ -139,6 +139,11 @@ namespace Artentus
                     return new VectorEnumerator(this);
                 }
 
+                public bool Equals(IVector other)
+                {
+                    return Vector.CheckForEquality(this, other);
+                }
+
                 public static Point2D operator +(Point2D left, Point2D right)
                 {
                     return (Point2D)Vector.Add(left, right);

@@ -9,12 +9,11 @@ namespace Artentus
     {
         namespace Math
         {
-            public interface IVector : IEnumerable<double>
+            public interface IVector : IEnumerable<double>, IEquatable<IVector>
             {
                 /// <summary>
                 /// Gibt die Koordinate an dem angegebenen Index zurück oder legt diese fest.
                 /// </summary>
-                /// <param name="index"></param>
                 /// <returns></returns>
                 double this[int index] { get; set; }
 

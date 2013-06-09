@@ -160,6 +160,11 @@ namespace Artentus
                     return new VectorEnumerator(this);
                 }
 
+                public bool Equals(IVector other)
+                {
+                    return Vector.CheckForEquality(this, other);
+                }
+
                 System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
                 {
                     return new VectorEnumerator(this);

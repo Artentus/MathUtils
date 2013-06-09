@@ -220,7 +220,7 @@ namespace Artentus
                 /// <param name="m"></param>
                 /// <param name="v"></param>
                 /// <returns></returns>
-                public static Vector4 Multiplicate(Matrix4x4 m, Vector4 v)
+                public static Vector4 Multiply(Matrix4x4 m, Vector4 v)
                 {
                     //Matrix mit Vektor multiplizieren
                     var resultMatrix = m * v.ToVerticalMatrix(); //Vektor in Matrix umwandeln
@@ -245,12 +245,12 @@ namespace Artentus
 
                 public static Vector4 operator *(Matrix4x4 m, Vector4 v)
                 {
-                    return Multiplicate(m, v);
+                    return Multiply(m, v);
                 }
 
                 public static Vector4 operator *(Vector4 v, Matrix4x4 m)
                 {
-                    return Multiplicate(m, v);
+                    return Multiply(m, v);
                 }
 
                 public static Matrix4x4 operator +(Matrix4x4 left, Matrix4x4 right)

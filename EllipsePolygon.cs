@@ -11,12 +11,13 @@ namespace Artentus
         namespace Geometry
         {
             /// <summary>
-            /// Stellt einen Kreis dar.
+            /// Stellt eine Ellipse dar.
             /// </summary>
-            public struct CirclePolygon : IPolygon
+            public struct EllipsePolygon : IPolygon
             {
                 Point2D _center;
-                double _radius;
+                double _radiusX;
+                double _radiusY;
                 Point2D[] points;
 
                 public Point2D[] GetPoints()
@@ -29,7 +30,7 @@ namespace Artentus
                 }
 
                 /// <summary>
-                /// Der Mittelpunkt dieses Kreises.
+                /// Der Mittelpunkt dieser Ellipse.
                 /// </summary>
                 public Point2D Center
                 {
@@ -45,17 +46,33 @@ namespace Artentus
                 }
 
                 /// <summary>
-                /// Der Radius dieses Kreises.
+                /// Der Radius in X-Richtung dieser Ellipse.
                 /// </summary>
-                public double Radius
+                public double RadiusX
                 {
                     get
                     {
-                        return _radius;
+                        return _radiusX;
                     }
                     set
                     {
-                        _radius = value;
+                        _radiusX = value;
+                        points = null; //Punkte müssen neu berechnet werden
+                    }
+                }
+
+                /// <summary>
+                /// Der Radius in Y-Richtung dieser Ellipse.
+                /// </summary>
+                public double RadiusY
+                {
+                    get
+                    {
+                        return _radiusY;
+                    }
+                    set
+                    {
+                        _radiusY = value;
                         points = null; //Punkte müssen neu berechnet werden
                     }
                 }
@@ -63,14 +80,18 @@ namespace Artentus
                 private void CalculatePoints()
                 {
                     //Anzahl Punkte bestimmen
-                    var perimeter = 2 * System.Math.PI * Radius;
+                    var perimeter = 2 * System.Math.PI * System.Math.Max(RadiusX, RadiusY);
                     var pointCount = (int)(perimeter / 10.0); //durch 10 teilen um unnötigen Rechenaufwand zu vermeiden
                     points = new Point2D[pointCount];
+                    var yFactor = RadiusY / RadiusX;
 
                     //Punkte berechnen
                     var angleStep = (2 * System.Math.PI) / (double)pointCount;
                     for (int i = 0; i < pointCount; i++)
-                        points[i] = MathHelper.GetPointOnCircle(Center, i * angleStep, Radius);
+                    {
+                        points[i] = MathHelper.GetPointOnCircle(Center, i * angleStep, RadiusX);
+                        points[i].Y *= yFactor;
+                    }
                 }
 
                 public IEnumerator<Point2D> GetEnumerator()

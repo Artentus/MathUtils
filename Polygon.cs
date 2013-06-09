@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.CompilerServices;
+using System.Drawing;
 using Artentus.Utils.Math;
 
 namespace Artentus
@@ -57,71 +58,63 @@ namespace Artentus
                 /// <returns></returns>
                 public static IPolygon ConvexHull(this IPolygon value)
                 {
-                    if (value is CirclePolygon || value is RectanglePolygon)
-                        return value; //Sonderfälle brauchen nicht berechnet zu werden
-
-                    var points = value.GetPoints();
-                    
                     //Startpunkt bestimmen
-                    var startIndex = (from item in points orderby item.X, item.Y select Array.IndexOf<Point2D>(points, item)).First(); //Punkt mit kleinstem X- und Y-Wert ist definitiv Teil der Hülle
+                    var startPoint = value.GetPoints().OrderBy(item => item.Y).ThenBy(item => item.X).First();
 
-                    var pointsInHull = new bool[points.Length];
-                    pointsInHull[startIndex] = true;
+                    //Punkte sortieren
+                    var comp = new AngleComparer(startPoint);
+                    var sorted = value.GetPoints().OrderBy(item => item, comp).ToArray();
 
-                    //vorheriger Punkt
-                    Point2D old;
-                    if (startIndex > 0)
-                        old = points[startIndex - 1];
-                    else
-                        old = points[points.Length - 1];
+                    //Stack vorbereiten
+                    var result = new Stack<Point2D>();
+                    result.Push(sorted[0]);
+                    result.Push(sorted[1]);
 
-                    var lastIndex = startIndex;
-                    while (lastIndex != startIndex)
+                    for (int i = 2; i < sorted.Length; i++)
                     {
-                        var nextIndex = lastIndex + 1;
-                        if (nextIndex == points.Length)
-                            nextIndex = 0;
-                        var targetIndex = -1;
-                        var targetAngle = double.MinValue;
+                        while (GetSweepDirection(result.ElementAt(1), result.ElementAt(0), sorted[i]) > 0)
+                            result.Pop();
 
-                        while (nextIndex != lastIndex)
-                        {
-                            //Winkel zum neuen Punkt bestimmen
-                            var angle = 0.0;
-                            var v1 = old - points[lastIndex];
-                            var v2 = points[nextIndex] - points[lastIndex];
-                            var d1 = v1.Length();
-                            var d2 = v2.Length();
-                            angle = System.Math.Acos(Vector.GetScalarProduct(v1, v2) / (d1 * d2));
-
-                            //wenn größer als alter Winkel, nächsten Punkt festlegen
-                            if (angle > targetAngle)
-                            {
-                                targetIndex = nextIndex;
-                                targetAngle = angle;
-                            }
-
-                            nextIndex++;
-                            if (nextIndex == points.Length)
-                                nextIndex = 0;
-                        }
-
-                        old = points[lastIndex];
-                        lastIndex = targetIndex;
-                        pointsInHull[targetIndex] = true;
+                        result.Push(sorted[i]);
                     }
 
-                    //Punkte der Hülle bestimmen
-                    var hullPoints = new List<Point2D>();
-                    for (int i = 0; i < points.Length; i++)
-                        if (pointsInHull[i])
-                            hullPoints.Add(points[i]);
+                    //Polygon erzeugen
+                    var convexPoly = new GeneralPolygon();
+                    convexPoly.Points.AddRange(result);
+                    return convexPoly;
+                }
 
-                    //neues Polygon erzeugen
-                    var hull = new GeneralPolygon();
-                    hull.Points.AddRange(hullPoints);
+                private class AngleComparer : IComparer<Point2D>
+                {
+                    Point2D start;
 
-                    return hull;
+                    internal AngleComparer(Point2D start)
+                    {
+                        this.start = start;
+                    }
+
+                    public int Compare(Point2D a, Point2D b)
+                    {
+                        double angleA = (start.X - a.X) / (a.Y - start.Y);
+                        double angleB = (start.X - b.X) / (b.Y - start.Y);
+
+                        var result = (-angleA).CompareTo(-angleB);
+
+                        if (result == 0)
+                        {
+                            var distA = a.DistanceTo(start);
+                            var distB = b.DistanceTo(start);
+
+                            result = distA.CompareTo(distB);
+                        }
+
+                        return result;
+                    }
+                }
+
+                private static double GetSweepDirection(Point2D p1, Point2D p2, Point2D p3)
+                {
+                    return (p2.X - p1.X) * (p3.Y - p1.Y) - (p2.Y - p1.Y) * (p3.X - p1.X);
                 }
 
                 /// <summary>
@@ -222,6 +215,21 @@ namespace Artentus
                 }
 
                 /// <summary>
+                /// Prüft, ob diese Polygon ein anderes komplett einschließt.
+                /// </summary>
+                /// <param name="first"></param>
+                /// <param name="second"></param>
+                /// <returns></returns>
+                public static bool Contains(this IPolygon first, IPolygon second)
+                {
+                    foreach (var p in second.GetPoints())
+                        if (!first.Contains(p))
+                            return false;
+
+                    return true;
+                }
+
+                /// <summary>
                 /// Prüft, ob sich dieses Polygon mit einem anderen überschneidet.
                 /// </summary>
                 /// <param name="first"></param>
@@ -229,60 +237,6 @@ namespace Artentus
                 /// <returns></returns>
                 public static bool IntersectsWith(this IPolygon first, IPolygon second)
                 {
-                    //var p1 = first.GetPoints();
-                    //var p2 = first.GetPoints();
-
-                    //for (int i = 0; i < p1.Length; i++)
-                    //{
-                    //    Point2D point1;
-                    //    Point2D point2;
-                    //    point1 = p1[i];
-                    //    if (i == p1.Length - 1)
-                    //        point2 = p1[0];
-                    //    else
-                    //        point2 = p1[i + 1];
-                    //    var p = point2 - point1;
-
-                    //    var axis = (Vector2)(new Vector2(-p.Y, p.X).Normalize());
-                    //    var v1 = Project(axis, first);
-                    //    var v2 = Project(axis, second);
-
-                    //    var dist = 0.0;
-                    //    if (v1.X < v2.X)
-                    //        dist = v2.X - v1.Y;
-                    //    else
-                    //        dist = v1.X - v2.Y;
-
-                    //    if (dist > 0)
-                    //        return false;
-                    //}
-
-                    //for (int i = 0; i < p2.Length; i++)
-                    //{
-                    //    Point2D point1;
-                    //    Point2D point2;
-                    //    point1 = p2[i];
-                    //    if (i == p2.Length - 1)
-                    //        point2 = p2[0];
-                    //    else
-                    //        point2 = p2[i + 1];
-                    //    var p = point2 - point1;
-
-                    //    var axis = (Vector2)(new Vector2(-p.Y, p.X).Normalize());
-                    //    var v1 = Project(axis, first);
-                    //    var v2 = Project(axis, second);
-
-                    //    var dist = 0.0;
-                    //    if (v1.X < v2.X)
-                    //        dist = v2.X - v1.Y;
-                    //    else
-                    //        dist = v1.X - v2.Y;
-
-                    //    if (dist > 0)
-                    //        return false;
-                    //}
-
-                    //return true;
                     if (HasSeparatingAxis(first, second))
                         return false;
 
@@ -330,6 +284,36 @@ namespace Artentus
                         if (d > max)
                             max = d;
                     }
+                }
+
+                /// <summary>
+                /// Gibt die Boundingbox dieses Polygons zurück.
+                /// </summary>
+                /// <param name="value"></param>
+                /// <returns></returns>
+                public static RectangleF BoundingBox(this IPolygon value)
+                {
+                    var minX = double.MaxValue;
+                    var maxX = double.MinValue;
+                    var minY = double.MaxValue;
+                    var maxY = double.MinValue;
+
+                    foreach (var p in value.GetPoints())
+                    {
+                        if (p.X < minX)
+                            minX = p.X;
+
+                        if (p.X > maxX)
+                            maxX = p.X;
+
+                        if (p.Y < minY)
+                            minY = p.Y;
+
+                        if (p.Y > maxY)
+                            maxY = p.Y;
+                    }
+
+                    return new RectangleF((float)minX, (float)minY, (float)(maxX - minX), (float)(maxY - minY));
                 }
             }
         }

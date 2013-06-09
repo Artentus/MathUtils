@@ -121,6 +121,11 @@ namespace Artentus
                     return new VectorEnumerator(this);
                 }
 
+                public bool Equals(IVector other)
+                {
+                    return Vector.CheckForEquality(this, other);
+                }
+
                 public static Vector3 operator +(Vector3 left, Vector3 right)
                 {
                     return (Vector3)Vector.Add(left, right);

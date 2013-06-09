@@ -11,12 +11,14 @@ namespace Artentus
         namespace Geometry
         {
             /// <summary>
-            /// Stellt einen Kreis dar.
+            /// Stellt einen Kreisbogen dar.
             /// </summary>
-            public struct CirclePolygon : IPolygon
+            public struct ArcPolygon : IPolygon
             {
                 Point2D _center;
                 double _radius;
+                double _startAngle;
+                double _sweepAngle;
                 Point2D[] points;
 
                 public Point2D[] GetPoints()
@@ -29,7 +31,7 @@ namespace Artentus
                 }
 
                 /// <summary>
-                /// Der Mittelpunkt dieses Kreises.
+                /// Der Mittelpunkt dieses Kreisbogens.
                 /// </summary>
                 public Point2D Center
                 {
@@ -45,7 +47,7 @@ namespace Artentus
                 }
 
                 /// <summary>
-                /// Der Radius dieses Kreises.
+                /// Der Radius dieses Kreisbogens.
                 /// </summary>
                 public double Radius
                 {
@@ -60,17 +62,49 @@ namespace Artentus
                     }
                 }
 
+                /// <summary>
+                /// Der Startwinkel des Kreisbogens.
+                /// </summary>
+                public double StartAngle
+                {
+                    get
+                    {
+                        return _startAngle;
+                    }
+                    set
+                    {
+                        _startAngle = value;
+                        points = null; //Punkte müssen neu berechnet werden
+                    }
+                }
+
+                /// <summary>
+                /// Der Winkel des Kreisbogens.
+                /// </summary>
+                public double SweepAngle
+                {
+                    get
+                    {
+                        return _sweepAngle;
+                    }
+                    set
+                    {
+                        _sweepAngle = value;
+                        points = null; //Punkte müssen neu berechnet werden
+                    }
+                }
+
                 private void CalculatePoints()
                 {
                     //Anzahl Punkte bestimmen
-                    var perimeter = 2 * System.Math.PI * Radius;
+                    var perimeter = SweepAngle * Radius;
                     var pointCount = (int)(perimeter / 10.0); //durch 10 teilen um unnötigen Rechenaufwand zu vermeiden
                     points = new Point2D[pointCount];
 
                     //Punkte berechnen
-                    var angleStep = (2 * System.Math.PI) / (double)pointCount;
+                    var angleStep = SweepAngle / (double)pointCount;
                     for (int i = 0; i < pointCount; i++)
-                        points[i] = MathHelper.GetPointOnCircle(Center, i * angleStep, Radius);
+                        points[i] = MathHelper.GetPointOnCircle(Center, i * angleStep + StartAngle, Radius);
                 }
 
                 public IEnumerator<Point2D> GetEnumerator()

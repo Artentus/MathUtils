@@ -10,8 +10,15 @@ namespace Artentus
     {
         namespace Geometry
         {
+            /// <summary>
+            /// Stellt ein Polygon dar.
+            /// </summary>
             public interface IPolygon : IEnumerable<Point2D>
             {
+                /// <summary>
+                /// Gibt die Punkte des Polygons zurück.
+                /// </summary>
+                /// <returns></returns>
                 Point2D[] GetPoints();
             }
         }

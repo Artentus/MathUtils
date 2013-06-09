@@ -215,6 +215,32 @@ namespace Artentus
 
                     return val;
                 }
+
+                /// <summary>
+                /// Prüft, ob zwei Vektoren gleich sind.
+                /// </summary>
+                /// <param name="left"></param>
+                /// <param name="right"></param>
+                /// <returns></returns>
+                public static bool CheckForEquality(IVector left, IVector right)
+                {
+                    var coords1 = new List<double>(left.Coordinates());
+                    var coords2 = new List<double>(right.Coordinates());
+
+                    //Dimensionszahl angleichen
+                    var maxDimension = System.Math.Max(coords1.Count, coords2.Count);
+                    while (coords1.Count < maxDimension)
+                        coords1.Add(0);
+                    while (coords2.Count < maxDimension)
+                        coords2.Add(0);
+
+                    //alle Koordinaten vergleichen
+                    for (int i = 0; i < maxDimension; i++)
+                        if (coords1[i] != coords2[i])
+                            return false;
+
+                    return true;
+                }
             }
         }
     }
