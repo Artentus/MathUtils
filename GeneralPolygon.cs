@@ -10,10 +10,16 @@ namespace Artentus
     {
         namespace Geometry
         {
+            /// <summary>
+            /// Stellt ein Polygon beliebiger Form dar.
+            /// </summary>
             public struct GeneralPolygon : IPolygon
             {
                 List<Point2D> _points;
 
+                /// <summary>
+                /// Die Punkte dieses Polygons.
+                /// </summary>
                 public List<Point2D> Points
                 {
                     get

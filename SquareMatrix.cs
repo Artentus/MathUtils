@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace Artentus
 {
@@ -135,15 +136,87 @@ namespace Artentus
                     return SquareMatrix.FromMatrix(m.GetTranspose());
                 }
 
+                private Matrix GaussJordan(Matrix input)
+                {
+                    var myClone = (SquareMatrix)this.Clone();
+
+                    //Zeilen voneinander subtrahieren
+                    for (int x = 0; x < ColumnCount; x++)
+                    {
+                        //Zeilen tauschen, wenn erforderlich
+                        var next = x;
+                        while (myClone[x, x] == 0) //nächste gültige Zeile ermitteln
+                        {
+                            next++;
+
+                            if (next >= Size) //keine gültige Zeile vorhanden
+                                throw new InvalidOperationException("Dieses Gleichungsystem kann nicht aufgelöst werden.");
+
+                            if (myClone[next, x] != 0)
+                            {
+                                //aktuelle Zeile mit gültiger Zeile austauschen
+                                myClone.ChangeRows(x, next);
+                                input.ChangeRows(x, next);
+                            }
+                        }
+
+                        //Subtrahieren
+                        for (int y = 0; y < RowCount; y++)
+                            if (x != y) //Diagonale auslassen
+                                if (myClone[x, y] != 0) //bei Zellenwert 0 keine Berechnung erforderlich
+                                {
+                                    var f = myClone[x, y] / myClone[x, x]; //Faktor berechnen
+                                    myClone.SubtractRows(y, x, f);
+                                    input.SubtractRows(y, x, f);
+                                }
+                        }
+
+                    //Diagonale auf 1 setzen
+                    for (int i = 0; i < Size; i++)
+                    {
+                        //Zeile so multiplizieren, dass (i,i) 1 wird
+                        var f = 1 / myClone[i, i];
+                        myClone.MultiplyRow(i, f);
+                        input.MultiplyRow(i, f);
+                    }
+
+                    return input;
+                }
+
                 /// <summary>
                 /// Berechnet die invertierte Matrix dieser quadratischen Matrix.
                 /// </summary>
                 /// <returns></returns>
                 public SquareMatrix GetInverse()
                 {
-                    if (IsSingular)
-                        throw new InvalidOperationException("Von dieser Matrix kann keine Inverse gebildet werden, da sie singulär ist:");
-                    return (1 / GetDeterminant()) * GetAdjugate();
+                    return (SquareMatrix)GaussJordan(SquareMatrix.GetIdentity(Size));
+                }
+
+                internal static double[] SolveLinearSystem(SquareMatrix left, double[] right)
+                {
+                    var rightMatrix = new Matrix(1, right.Length);
+                    for (int i = 0; i < right.Length; i++)
+                        rightMatrix[0, i] = right[i];
+
+                    var resultMatrix = left.GaussJordan(rightMatrix);
+
+                    var result = new double[right.Length];
+                    for (int i = 0; i < right.Length; i++)
+                        result[i] = resultMatrix[0, i];
+
+                    return result;
+                }
+
+                public override object Clone()
+                {
+                    var m = new SquareMatrix(Size); //neue Matrix erstellen
+
+                    //alle Werte kopieren
+                    for (int x = 0; x < ColumnCount; x++)
+                        for (int y = 0; y < RowCount; y++)
+                            m[x, y] = this[x, y];
+
+                    return m;
                 }
 
                 public static SquareMatrix operator *(SquareMatrix value, double skalar)

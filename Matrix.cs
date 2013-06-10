@@ -199,6 +199,28 @@ namespace Artentus
                         throw new ArgumentException("Diese Matrizen können nicht addiert werden.");
                 }
 
+                internal void MultiplyRow(int row, double factor)
+                {
+                    for (int x = 0; x < ColumnCount; x++)
+                        this[x, row] *= factor;
+                }
+
+                internal void SubtractRows(int row1, int row2, double factor)
+                {
+                    for (int x = 0; x < ColumnCount; x++)
+                        this[x, row1] -= this[x, row2] * factor;
+                }
+
+                internal void ChangeRows(int row1, int row2)
+                {
+                    for (int x = 0; x < ColumnCount; x++)
+                    {
+                        var tempVal = this[x, row1];
+                        this[x, row1] = this[x, row2];
+                        this[x, row2] = tempVal;
+                    }
+                }
+
                 public static Matrix operator *(Matrix value, double skalar)
                 {
                     return Multiply(value, skalar);
@@ -274,7 +296,7 @@ namespace Artentus
                     }
                 }
 
-                public object Clone()
+                public virtual object Clone()
                 {
                     var m = new Matrix(ColumnCount, RowCount); //neue Matrix erstellen
 
@@ -289,7 +311,7 @@ namespace Artentus
                 public bool Equals(Matrix other)
                 {
                     //wenn nícht von gleichem Typ dann false
-                    if (!Matrix.CheckForSameType(this,other))
+                    if (!Matrix.CheckForSameType(this, other))
                         return false;
 
                     //alle Werte prüfen
