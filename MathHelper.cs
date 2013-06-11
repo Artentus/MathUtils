@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using System.Text.RegularExpressions;
 
 namespace Artentus
 {
@@ -375,6 +376,154 @@ namespace Artentus
                 public static bool IsInt(decimal value)
                 {
                     return value == (long)value;
+                }
+
+                private static List<string> GetInfixTokens(string term)
+                {
+                    term = term.Replace(" ", string.Empty).ToLowerInvariant(); //Leerzeichen entfernen und in Kleinbuchstaben konvertieren
+
+                    var tokens = new List<string>();
+
+                    //mit RegEx alle Zahlen aussortieren
+                    var r = new Regex(@"(((?<=(\(|^))(?<sign>[+\-]{0,1}))|(?<=.))(?<number>([0-9]+)(\.[0-9]+){0,1})");
+                    var numbers = r.Matches(term);
+                    term = r.Replace(term, "1");
+
+                    //Term in Tokens teilen
+                    var possibleTokens = new string[] { "+", "-", "*", "/", "^", "sqrt", "sin", "cos", "tan", "asin", "acos", "atan", "ln", "log", "(", ")" };
+                    var numberIndex = 0;
+                    while (term.Length > 0)
+                    {
+                        //Operatoren, Klammern und Funktionen prüfen
+                        foreach (var token in possibleTokens)
+                            if (term.StartsWith(token))
+                            {
+                                tokens.Add(token);
+
+                                if (term.Length > token.Length)
+                                    term = term.Substring(token.Length);
+                                else
+                                    term = string.Empty;
+                            }
+
+                        //Zahlen prüfen
+                        if (term.StartsWith("1"))
+                        {
+                            if (numbers[numberIndex].Groups["sign"].Value == "-")
+                                tokens.Add("!");
+                            tokens.Add(numbers[numberIndex].Groups["number"].Value);
+
+                            numberIndex++;
+
+                            if (term.Length > 1)
+                                term = term.Substring(1);
+                            else
+                                term = string.Empty;
+                        }
+                    }
+
+                    return tokens;
+                }
+
+                private static List<string> GetPostfixTokens(List<string> infixTokens)
+                {
+                    //Operatoren und Prioritäten definieren
+                    var operators = new string[] { "+", "-", "*", "/", "^", "sqrt", "sin", "cos", "tan", "asin", "acos", "atan", "ln", "log" };
+                    var priority = new int[] { 1, 1, 2, 2, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4 };
+                    var leftAssociative = new bool[] {true, true, true, true, false, true, true, true, true, true, true};
+
+                    var opStack = new Stack<string>();
+                    var result = new List<string>();
+
+                    //alle Tokens abarbeiten
+                    foreach (var token in infixTokens)
+                    {
+                        //bei Zahl
+                        var val = 0.0;
+                        if (double.TryParse(token, out val))
+                        {
+                            result.Add(token);
+                        }
+
+                        //bei öffnender Klammer
+                        if (token == "(")
+                            opStack.Push(token);
+
+                        //bei schließender Klammer
+                        if (token == ")")
+                        {
+                            while (opStack.Peek() != "(")
+                                result.Add(opStack.Pop());
+
+                            opStack.Pop();
+                        }
+
+                        //bei Operator
+                        if (operators.Contains(token))
+                        {
+                            var tokenPriority = priority[Array.IndexOf(operators, token)];
+                            var tokenAssocitivity = leftAssociative[Array.IndexOf(operators, token)];
+                            while (opStack.Count > 0)
+                            {
+                                var stackPriority = 0;
+                                if (opStack.Peek() == "(" || opStack.Peek() == ")")
+                                    stackPriority = 0;
+                                else
+                                    stackPriority = priority[Array.IndexOf(operators, opStack.Peek())];
+
+                                if ((tokenPriority < stackPriority) || ((tokenPriority == stackPriority) && tokenAssocitivity))
+                                    result.Add(opStack.Pop());
+                                else
+                                    break;
+                            }
+
+                            opStack.Push(token);
+                        }
+                    }
+
+                    //Rest des Stacks zur Augabe schieben
+                    for (int i = 0; i < opStack.Count; i++)
+                        result.Add(opStack.Pop());
+
+                    return result;
+                }
+
+                /// <summary>
+                /// Wertet einen Term aus.
+                /// </summary>
+                /// <param name="term"></param>
+                /// <returns></returns>
+                public static double Eval(string term)
+                {
+                    var tokens = GetPostfixTokens(GetInfixTokens(term));
+                    var result = new Stack<double>();
+
+                    //Operatoren implementieren
+                    var operators = new Dictionary<string, Func<Stack<double>, double>>();
+                    operators.Add("+", new Func<Stack<double>, double>(s => s.Pop() + s.Pop()));
+                    operators.Add("-", new Func<Stack<double>, double>(s => -s.Pop() + s.Pop()));
+                    operators.Add("!", new Func<Stack<double>, double>(s => -s.Pop()));
+                    operators.Add("*", new Func<Stack<double>, double>(s => s.Pop() * s.Pop()));
+                    operators.Add("/", new Func<Stack<double>, double>(s => (1 / s.Pop()) * s.Pop()));
+                    operators.Add("^", new Func<Stack<double>, double>(s => { var temp = s.Pop(); return System.Math.Pow(s.Pop(), temp); }));
+                    operators.Add("sqrt", new Func<Stack<double>, double>(s => System.Math.Sqrt(s.Pop())));
+                    operators.Add("sin", new Func<Stack<double>, double>(s => System.Math.Sin(s.Pop())));
+                    operators.Add("cos", new Func<Stack<double>, double>(s => System.Math.Cos(s.Pop())));
+                    operators.Add("tan", new Func<Stack<double>, double>(s => System.Math.Tan(s.Pop())));
+                    operators.Add("asin", new Func<Stack<double>, double>(s => System.Math.Asin(s.Pop())));
+                    operators.Add("acos", new Func<Stack<double>, double>(s => System.Math.Acos(s.Pop())));
+                    operators.Add("atan", new Func<Stack<double>, double>(s => System.Math.Atan(s.Pop())));
+                    operators.Add("ln", new Func<Stack<double>, double>(s => System.Math.Log(s.Pop())));
+                    operators.Add("log", new Func<Stack<double>, double>(s => System.Math.Log10(s.Pop())));
+
+                    //Ausrechnen
+                    foreach (var token in tokens)
+                        if (operators.ContainsKey(token))
+                            result.Push(operators[token](result));
+                        else
+                            result.Push(double.Parse(token));
+
+                    return result.Pop();
                 }
             }
         }
