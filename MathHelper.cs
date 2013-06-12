@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
+using System.Globalization;
 
 namespace Artentus
 {
@@ -378,19 +380,31 @@ namespace Artentus
                     return value == (long)value;
                 }
 
+                /// <summary>
+                /// Berechnet die n-te Wurzel einer Zahl.
+                /// </summary>
+                /// <param name="radicant"></param>
+                /// <param name="degree"></param>
+                /// <returns></returns>
+                public static double NthRoot(double radicant, double degree)
+                {
+                    return System.Math.Pow(radicant, 1 / degree);
+                }
+
                 private static List<string> GetInfixTokens(string term)
                 {
-                    term = term.Replace(" ", string.Empty).ToLowerInvariant(); //Leerzeichen entfernen und in Kleinbuchstaben konvertieren
+                    //Leerzeichen entfernen, in Kleinbuchstaben konvertieren und konstanten austauschen
+                    term = term.Replace(" ", string.Empty).ToLowerInvariant().Replace("pi", System.Math.PI.ToString(CultureInfo.InvariantCulture.NumberFormat));
 
                     var tokens = new List<string>();
 
                     //mit RegEx alle Zahlen aussortieren
-                    var r = new Regex(@"(((?<=(\(|^))(?<sign>[+\-]{0,1}))|(?<=.))(?<number>([0-9]+)(\.[0-9]+){0,1})");
+                    var r = new Regex(@"(?<number>([0-9]+)((\.[0-9]+){0,1})((e[0-9]+){0,1}))");  //(@"(((?<=(\(|^))(?<sign>[+\-]{0,1}))|(?<=.))(?<number>([0-9]+)(\.[0-9]+){0,1})");
                     var numbers = r.Matches(term);
                     term = r.Replace(term, "1");
 
                     //Term in Tokens teilen
-                    var possibleTokens = new string[] { "+", "-", "*", "/", "^", "sqrt", "sin", "cos", "tan", "asin", "acos", "atan", "ln", "log", "(", ")" };
+                    var possibleTokens = new string[] { "+", "-", "*", "/", "^", "sqrt", "root", "sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh", "ln", "log", "abs", "int", "(", ")", "," };
                     var numberIndex = 0;
                     while (term.Length > 0)
                     {
@@ -398,7 +412,13 @@ namespace Artentus
                         foreach (var token in possibleTokens)
                             if (term.StartsWith(token))
                             {
-                                tokens.Add(token);
+                                if ((token == "+" || token == "-") && (tokens.Count == 0 || tokens.Last() == "(")) //Vorzeichen
+                                {
+                                    if (token == "-")
+                                        tokens.Add("!");
+                                }
+                                else
+                                    tokens.Add(token);
 
                                 if (term.Length > token.Length)
                                     term = term.Substring(token.Length);
@@ -409,8 +429,6 @@ namespace Artentus
                         //Zahlen prüfen
                         if (term.StartsWith("1"))
                         {
-                            if (numbers[numberIndex].Groups["sign"].Value == "-")
-                                tokens.Add("!");
                             tokens.Add(numbers[numberIndex].Groups["number"].Value);
 
                             numberIndex++;
@@ -428,9 +446,22 @@ namespace Artentus
                 private static List<string> GetPostfixTokens(List<string> infixTokens)
                 {
                     //Operatoren und Prioritäten definieren
-                    var operators = new string[] { "+", "-", "*", "/", "^", "sqrt", "sin", "cos", "tan", "asin", "acos", "atan", "ln", "log" };
-                    var priority = new int[] { 1, 1, 2, 2, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4 };
-                    var leftAssociative = new bool[] {true, true, true, true, false, true, true, true, true, true, true};
+                    var operators = new string[] { "+", "-", "*", "/", "^", "!" };
+                    var priority = new Dictionary<string, int>();
+                    priority.Add("+", 1);
+                    priority.Add("-", 1);
+                    priority.Add("*", 2);
+                    priority.Add("/", 2);
+                    priority.Add("!", 3);
+                    priority.Add("^", 4);
+                    var leftAssociative = new Dictionary<string, bool>();
+                    leftAssociative.Add("+", true);
+                    leftAssociative.Add("-", true);
+                    leftAssociative.Add("*", true);
+                    leftAssociative.Add("/", true);
+                    leftAssociative.Add("!", true);
+                    leftAssociative.Add("^", false);
+                    var functions = new string[] { "sqrt", "root", "sin", "cos", "tan", "asin", "acos", "atan", "ln", "log" };
 
                     var opStack = new Stack<string>();
                     var result = new List<string>();
@@ -441,43 +472,40 @@ namespace Artentus
                         //bei Zahl
                         var val = 0.0;
                         if (double.TryParse(token, out val))
-                        {
                             result.Add(token);
-                        }
 
-                        //bei öffnender Klammer
-                        if (token == "(")
+                        //bei Funktion
+                        else if (functions.Contains(token))
                             opStack.Push(token);
 
-                        //bei schließender Klammer
-                        if (token == ")")
-                        {
+                        //bei Argumenttrennzeichen
+                        else if (token == ",")
                             while (opStack.Peek() != "(")
                                 result.Add(opStack.Pop());
 
-                            opStack.Pop();
-                        }
-
                         //bei Operator
-                        if (operators.Contains(token))
+                        else if (operators.Contains(token))
                         {
-                            var tokenPriority = priority[Array.IndexOf(operators, token)];
-                            var tokenAssocitivity = leftAssociative[Array.IndexOf(operators, token)];
-                            while (opStack.Count > 0)
-                            {
-                                var stackPriority = 0;
-                                if (opStack.Peek() == "(" || opStack.Peek() == ")")
-                                    stackPriority = 0;
-                                else
-                                    stackPriority = priority[Array.IndexOf(operators, opStack.Peek())];
-
-                                if ((tokenPriority < stackPriority) || ((tokenPriority == stackPriority) && tokenAssocitivity))
-                                    result.Add(opStack.Pop());
-                                else
-                                    break;
-                            }
+                            while (opStack.Count > 0 && operators.Contains(opStack.Peek())
+                                && ((leftAssociative[token] && priority[token] == priority[opStack.Peek()]) || priority[token] < priority[opStack.Peek()]))
+                                result.Add(opStack.Pop());
 
                             opStack.Push(token);
+                        }
+
+                        //bei öffnender Klammer
+                        else if (token == "(")
+                            opStack.Push(token);
+
+                        //bei schließender Klammer
+                        else if (token == ")")
+                        {
+                            while (opStack.Peek() != "(")
+                                result.Add(opStack.Pop());
+                            opStack.Pop();
+
+                            if (opStack.Count > 0 && functions.Contains(opStack.Peek()))
+                                result.Add(opStack.Pop());
                         }
                     }
 
@@ -507,21 +535,27 @@ namespace Artentus
                     operators.Add("/", new Func<Stack<double>, double>(s => (1 / s.Pop()) * s.Pop()));
                     operators.Add("^", new Func<Stack<double>, double>(s => { var temp = s.Pop(); return System.Math.Pow(s.Pop(), temp); }));
                     operators.Add("sqrt", new Func<Stack<double>, double>(s => System.Math.Sqrt(s.Pop())));
+                    operators.Add("root", new Func<Stack<double>, double>(s => { var temp = s.Pop(); return NthRoot(s.Pop(), temp); }));
                     operators.Add("sin", new Func<Stack<double>, double>(s => System.Math.Sin(s.Pop())));
                     operators.Add("cos", new Func<Stack<double>, double>(s => System.Math.Cos(s.Pop())));
                     operators.Add("tan", new Func<Stack<double>, double>(s => System.Math.Tan(s.Pop())));
                     operators.Add("asin", new Func<Stack<double>, double>(s => System.Math.Asin(s.Pop())));
                     operators.Add("acos", new Func<Stack<double>, double>(s => System.Math.Acos(s.Pop())));
                     operators.Add("atan", new Func<Stack<double>, double>(s => System.Math.Atan(s.Pop())));
+                    operators.Add("sinh", new Func<Stack<double>, double>(s => System.Math.Sinh(s.Pop())));
+                    operators.Add("cosh", new Func<Stack<double>, double>(s => System.Math.Cosh(s.Pop())));
+                    operators.Add("tanh", new Func<Stack<double>, double>(s => System.Math.Tanh(s.Pop())));
                     operators.Add("ln", new Func<Stack<double>, double>(s => System.Math.Log(s.Pop())));
-                    operators.Add("log", new Func<Stack<double>, double>(s => System.Math.Log10(s.Pop())));
-
+                    operators.Add("log", new Func<Stack<double>, double>(s => { var temp = s.Pop(); return System.Math.Log(temp, s.Pop()); }));
+                    operators.Add("abs", new Func<Stack<double>, double>(s => System.Math.Abs(s.Pop())));
+                    operators.Add("int", new Func<Stack<double>, double>(s => (long)s.Pop()));
+                
                     //Ausrechnen
                     foreach (var token in tokens)
                         if (operators.ContainsKey(token))
                             result.Push(operators[token](result));
                         else
-                            result.Push(double.Parse(token));
+                            result.Push(double.Parse(token, CultureInfo.InvariantCulture.NumberFormat));
 
                     return result.Pop();
                 }
