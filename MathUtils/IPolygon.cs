@@ -18,8 +18,17 @@ namespace Artentus
                 /// <summary>
                 /// Gibt die Punkte des Polygons zurück.
                 /// </summary>
-                /// <returns></returns>
                 Point2D[] GetPoints();
+
+                /// <summary>
+                /// Gibt die Punkte des Polygons zurück, ohne die Transformationsmatrix zu berücksichtigen.
+                /// </summary>
+                Point2D[] GetUntransformedPoints();
+
+                /// <summary>
+                /// Die Transformationsmatrix für dieses Polygon.
+                /// </summary>
+                Matrix3x3 TransformationMatrix { get; set; }
             }
         }
     }

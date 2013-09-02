@@ -9,7 +9,10 @@ namespace Artentus
     {
         namespace Math
         {
-            public struct Point3D : IVector
+            /// <summary>
+            /// Ein dreidimensionaler Vektor.
+            /// </summary>
+            public struct Vector3 : IVector
             {
                 /// <summary>
                 /// Die X-Koordinate.
@@ -34,8 +37,6 @@ namespace Artentus
                 /// <summary>
                 /// Gibt die Koordinate an dem angegebenen Index zurück oder legt diese fest.
                 /// </summary>
-                /// <param name="index"></param>
-                /// <returns></returns>
                 public double this[int index]
                 {
                     get
@@ -72,9 +73,9 @@ namespace Artentus
                 }
 
                 /// <summary>
-                /// Erstellt einen neuen Point3D.
+                /// Erstellt einen neuen Vector3.
                 /// </summary>
-                public Point3D(double x, double y, double z)
+                public Vector3(double x, double y, double z)
                     : this()
                 {
                     X = x;
@@ -83,23 +84,22 @@ namespace Artentus
                 }
 
                 /// <summary>
-                /// Erstellt einen neuen Point3D.
+                /// Erstellt einen neuen Vector3.
                 /// </summary>
-                public Point3D(Point3D p)
+                public Vector3(Vector3 v)
                     : this()
                 {
-                    X = p.X;
-                    Y = p.Y;
-                    Z = p.Z;
+                    X = v.X;
+                    Y = v.Y;
+                    Z = v.Z;
                 }
 
                 /// <summary>
-                /// Konvertiert diesen Point3D in einen Vector3.
+                /// Berechnet das Kreuzprodukt (Vektorprodukt im R3) aus zwei Vektoren.
                 /// </summary>
-                /// <returns></returns>
-                public Vector3 ToVector3()
+                public static Vector3 GetCrossProduct(Vector3 left, Vector3 right)
                 {
-                    return new Vector3(X, Y, Z);
+                    return new Vector3(left.Y * right.Z - left.Z * right.Y, left.Z * right.X - left.X * right.Z, left.X * right.Y - left.Y * right.X);
                 }
 
                 public IEnumerator<double> GetEnumerator()
@@ -117,30 +117,34 @@ namespace Artentus
                     return Vector.CheckForEquality(this, other);
                 }
 
-                public static Point3D operator +(Point3D left, Point3D right)
+                public static Vector3 operator +(Vector3 left, Vector3 right)
                 {
-                    return (Point3D)Vector.Add(left, right);
+                    return Vector.Add(left, right);
                 }
 
-                public static Point3D operator +(Point3D left, Vector3 right)
+                public static Vector3 operator -(Vector3 left, Vector3 right)
                 {
-                    return (Point3D)Vector.Add(left, right);
+                    return Vector.Subtract(left, right);
                 }
 
-                public static Point3D operator -(Point3D left, Vector3 right)
+                public static Vector3 operator -(Vector3 value)
                 {
-                    return (Point3D)Vector.Subtract(left, right);
+                    return new Vector3(-value.X, -value.Y, -value.Z);
                 }
 
-                public static Vector3 operator -(Point3D left, Point3D right)
+                public static Vector3 operator *(Vector3 left, Vector3 right)
                 {
-                    var p = (Point3D)Vector.Subtract(left, right);
-                    return new Vector3(p.X, p.Y, p.Z);
+                    return Vector.Multiply(left, right);
                 }
 
-                public static Point3D operator -(Point3D value)
+                public static Vector3 operator *(Vector3 value, double skalar)
                 {
-                    return new Point3D(-value.X, -value.Y, -value.Z);
+                    return Vector.Multiply(value, skalar);
+                }
+
+                public static Vector3 operator *(double skalar, Vector3 value)
+                {
+                    return Vector.Multiply(value, skalar);
                 }
             }
         }

@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Artentus.Utils.Math.MathHelper">
+    <Position X="28" Y="0.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAABAAAAAAAgAAAggAIAAABAAAAAAAAQAAAQAAA=</HashCode>
+      <FileName>MathHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Artentus.Utils.Math.SquareMatrix">
+    <Position X="13.75" Y="0.75" Width="2.25" />
+    <Members>
+      <Method Name="GaussJordan" Hidden="true" />
+      <Method Name="SolveLinearSystem" Hidden="true" />
+      <Method Name="SquareMatrix" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAgAAAYAAAAAAAAAAEAAAAAAgAACECABQ=</HashCode>
+      <FileName>SquareMatrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Artentus.Utils.Math.Matrix4x4">
+    <Position X="13.75" Y="4.25" Width="2.25" />
+    <Members>
+      <Method Name="Matrix4x4" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAIACYAABAAAAAAAEAAAIAAAAAAESAAA=</HashCode>
+      <FileName>Matrix4x4.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Artentus.Utils.Math.Matrix">
+    <Position X="11.25" Y="0.75" Width="2.25" />
+    <Members>
+      <Method Name="System.Collections.IEnumerable.GetEnumerator" Hidden="true" />
+      <Field Name="values" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="Artentus.Utils.Math.Matrix.MatrixEnumerator">
+        <Members>
+          <Method Name="Dispose" Hidden="true" />
+          <Field Name="index" Hidden="true" />
+          <Field Name="m" Hidden="true" />
+          <Method Name="MatrixEnumerator" Hidden="true" />
+          <Property Name="System.Collections.IEnumerator.Current" Hidden="true" />
+        </Members>
+        <TypeIdentifier>
+          <NewMemberFileName>Matrix.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>ACICAAAAAAAEABCE6AABAAAAQAAAACAAAAAABAAADhA=</HashCode>
+      <FileName>Matrix.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Artentus.Utils.Math.Vector">
+    <Position X="0.5" Y="0.75" Width="2" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAACIEABDAABAIAAAQAAAAABAAAAAAgA=</HashCode>
+      <FileName>Vector.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Artentus.Utils.Geometry.Polygon">
+    <Position X="17.25" Y="0.75" Width="1.75" />
+    <Members>
+      <Method Name="GetSweepDirection" Hidden="true" />
+      <Method Name="HasSeparatingAxis" Hidden="true" />
+      <Method Name="ProjectPolygon" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Class Name="Artentus.Utils.Geometry.Polygon.AngleComparer" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Polygon.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAQAAAAAAAAAAABAAACAQAAAAACAAAQCYAAA=</HashCode>
+      <FileName>Polygon.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Artentus.Utils.Geometry.PolygonEnumerator" BaseTypeListCollapsed="true">
+    <Position X="17.25" Y="5.25" Width="1.75" />
+    <Members>
+      <Method Name="Dispose" Hidden="true" />
+      <Field Name="index" Hidden="true" />
+      <Field Name="p" Hidden="true" />
+      <Method Name="PolygonEnumerator" Hidden="true" />
+      <Property Name="System.Collections.IEnumerator.Current" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAABAAAAACAAAAAAAAAAAAAIEAAAAABAAA=</HashCode>
+      <FileName>PolygonEnumerator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Artentus.Utils.Math.VectorEnumerator">
+    <Position X="0.5" Y="4.25" Width="2" />
+    <Members>
+      <Method Name="Dispose" Hidden="true" />
+      <Field Name="index" Hidden="true" />
+      <Property Name="System.Collections.IEnumerator.Current" Hidden="true" />
+      <Field Name="v" Hidden="true" />
+      <Method Name="VectorEnumerator" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAABAAAAACAAAAAAAAAAAAAIBAAAAABAAA=</HashCode>
+      <FileName>VectorEnumerator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Artentus.Utils.Math.LinearEquation">
+    <Position X="26.25" Y="0.75" Width="1.5" />
+    <Members>
+      <Method Name="LinearEquation" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAEAAAAgAAAAAAAAAAAA=</HashCode>
+      <FileName>LinearEquation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Artentus.Utils.Math.LinearSystem">
+    <Position X="26.25" Y="2.25" Width="1.5" />
+    <Members>
+      <Method Name="LinearSystem" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAIEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LinearSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Artentus.Utils.Math.Vector2" BaseTypeListCollapsed="true">
+    <Position X="5.25" Y="0.75" Width="2.25" />
+    <Members>
+      <Method Name="System.Collections.IEnumerable.GetEnumerator" Hidden="true" />
+      <Method Name="Vector2" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAACABAA6AEAAAAAAAAAQAAAAAAAAAAAYAA=</HashCode>
+      <FileName>Vector2.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="Artentus.Utils.Math.Vector3" BaseTypeListCollapsed="true">
+    <Position X="7.75" Y="0.75" Width="2.25" />
+    <Members>
+      <Method Name="System.Collections.IEnumerable.GetEnumerator" Hidden="true" />
+      <Method Name="Vector3" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAABAA6AEAAAAAAAAAQEAAAAAAAAAAYAE=</HashCode>
+      <FileName>Vector3.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.21" />
+  </Struct>
+  <Struct Name="Artentus.Utils.Math.Vector4" BaseTypeListCollapsed="true">
+    <Position X="2.75" Y="0.75" Width="2.25" />
+    <Members>
+      <Method Name="System.Collections.IEnumerable.GetEnumerator" Hidden="true" />
+      <Method Name="Vector4" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAABAA6AEAAAAAgAAAQAAAAAAAAAAIYAE=</HashCode>
+      <FileName>Vector4.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="Artentus.Utils.Math.Point2D" BaseTypeListCollapsed="true">
+    <Position X="5.25" Y="4.25" Width="2.25" />
+    <Members>
+      <Method Name="operator -" Hidden="true" />
+      <Method Name="operator +" Hidden="true" />
+      <Method Name="Point2D" Hidden="true" />
+      <Method Name="System.Collections.IEnumerable.GetEnumerator" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAACACABAAyAEAAAAAAACAQAAAAAAAAAAAYAA=</HashCode>
+      <FileName>Point2D.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="Artentus.Utils.Math.Point3D" BaseTypeListCollapsed="true">
+    <Position X="7.75" Y="4.5" Width="2.25" />
+    <Members>
+      <Method Name="operator -" Hidden="true" />
+      <Method Name="operator +" Hidden="true" />
+      <Method Name="Point3D" Hidden="true" />
+      <Method Name="System.Collections.IEnumerable.GetEnumerator" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAABAAyAEAAAAAAAAAQEAAAAAAAAAAYAE=</HashCode>
+      <FileName>Point3D.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Struct Name="Artentus.Utils.Geometry.Line3D">
+    <Position X="24.25" Y="0.75" Width="1.75" />
+    <Members>
+      <Method Name="IntersectsInner" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAACAQgAAAAAAAAAQAAAAAEAAAABQAAA=</HashCode>
+      <FileName>Line3D.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="Artentus.Utils.Math.IVector">
+    <Position X="2.75" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IVector.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Artentus.Utils.Geometry.IPolygon">
+    <Position X="17.25" Y="3.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAAAAAAEAAAQAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IPolygon.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -13,64 +13,61 @@ namespace Artentus
             /// <summary>
             /// Stellt einen Kreis dar.
             /// </summary>
-            public struct CirclePolygon : IPolygon
+            public sealed class CirclePolygon : IPolygon
             {
-                Point2D _center;
-                double _radius;
                 Point2D[] points;
+                Point2D[] untransformedPoints;
+                Matrix3x3 matrix;
 
                 public Point2D[] GetPoints()
                 {
-                    //wenn keine Punkte vorhanden dann berechnen
-                    if (points == null)
-                        CalculatePoints();
-
                     return points;
                 }
 
-                /// <summary>
-                /// Der Mittelpunkt dieses Kreises.
-                /// </summary>
-                public Point2D Center
+                public Point2D[] GetUntransformedPoints()
+                {
+                    return untransformedPoints;
+                }
+
+                public Matrix3x3 TransformationMatrix
                 {
                     get
                     {
-                        return _center;
+                        return matrix;
                     }
                     set
                     {
-                        _center = value;
-                        points = null; //Punkte müssen neu berechnet werden
+                        matrix = value;
+                        if (value == null)
+                            points = untransformedPoints;
+                        else
+                        {
+                            points = new Point2D[untransformedPoints.Length];
+                            for (int i = 0; i < points.Length; i++)
+                                points[i] = untransformedPoints[i] * matrix;
+                        }
                     }
                 }
 
-                /// <summary>
-                /// Der Radius dieses Kreises.
-                /// </summary>
-                public double Radius
-                {
-                    get
-                    {
-                        return _radius;
-                    }
-                    set
-                    {
-                        _radius = value;
-                        points = null; //Punkte müssen neu berechnet werden
-                    }
-                }
-
-                private void CalculatePoints()
+                private static Point2D[] CalculatePoints(Point2D center, double radius)
                 {
                     //Anzahl Punkte bestimmen
-                    var perimeter = 2 * System.Math.PI * Radius;
+                    var perimeter = 2 * System.Math.PI * radius;
                     var pointCount = (int)(perimeter / 10.0); //durch 10 teilen um unnötigen Rechenaufwand zu vermeiden
-                    points = new Point2D[pointCount];
+                    var points = new Point2D[pointCount];
 
                     //Punkte berechnen
                     var angleStep = (2 * System.Math.PI) / (double)pointCount;
                     for (int i = 0; i < pointCount; i++)
-                        points[i] = MathHelper.GetPointOnCircle(Center, i * angleStep, Radius);
+                        points[i] = MathHelper.GetPointOnCircle(center, i * angleStep, radius);
+
+                    return points;
+                }
+
+                public CirclePolygon(Point2D center, double radius)
+                {
+                    untransformedPoints = CalculatePoints(center, radius);
+                    points = untransformedPoints;
                 }
 
                 public IEnumerator<Point2D> GetEnumerator()

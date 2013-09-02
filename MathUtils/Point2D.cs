@@ -30,8 +30,6 @@ namespace Artentus
                 /// <summary>
                 /// Gibt die Koordinate an dem angegebenen Index zurück oder legt diese fest.
                 /// </summary>
-                /// <param name="index"></param>
-                /// <returns></returns>
                 public double this[int index]
                 {
                     get
@@ -103,9 +101,19 @@ namespace Artentus
                 }
 
                 /// <summary>
+                /// Gibt das Kreuzprodukt dieses Vektors zurück.
+                /// </summary>
+                public Point2D CrossProduct
+                {
+                    get
+                    {
+                        return new Point2D(-Y, X);
+                    }
+                }
+
+                /// <summary>
                 /// Konvertiert diesen Point2D zu einem Point.
                 /// </summary>
-                /// <returns></returns>
                 public Point ToPoint()
                 {
                     return new Point((int)X, (int)Y);
@@ -114,19 +122,17 @@ namespace Artentus
                 /// <summary>
                 /// Konvertiert diesen Point2D zu einem PointF.
                 /// </summary>
-                /// <returns></returns>
                 public PointF ToPointF()
                 {
                     return new PointF((float)X, (float)Y);
                 }
 
                 /// <summary>
-                /// Konvertiert diesen Point2D in einen Vector2.
+                /// Berechnet das Vektorprodukt aus zwei Vektoren.
                 /// </summary>
-                /// <returns></returns>
-                public Vector2 ToVector2()
+                public static double GetVectorProduct(Point2D left, Point2D right)
                 {
-                    return new Vector2(X, Y);
+                    return left.X * right.Y - left.Y * right.X;
                 }
 
                 public IEnumerator<double> GetEnumerator()
@@ -146,23 +152,22 @@ namespace Artentus
 
                 public static Point2D operator +(Point2D left, Point2D right)
                 {
-                    return (Point2D)Vector.Add(left, right);
+                    return Vector.Add(left, right);
                 }
 
                 public static Point2D operator +(Point2D left, Vector2 right)
                 {
-                    return (Point2D)Vector.Add(left, right);
+                    return Vector.Add(left, right.As<Point2D>());
                 }
 
                 public static Point2D operator -(Point2D left, Vector2 right)
                 {
-                    return (Point2D)Vector.Subtract(left, right);
+                    return Vector.Subtract(left, right.As<Point2D>());
                 }
 
                 public static Vector2 operator -(Point2D left, Point2D right)
                 {
-                    var p = (Point2D)Vector.Subtract(left, right);
-                    return new Vector2(p.X, p.Y);
+                    return Vector.Subtract(left, right).As<Vector2>();
                 }
 
                 public static Point2D operator -(Point2D value)

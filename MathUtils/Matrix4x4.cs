@@ -71,8 +71,6 @@ namespace Artentus
                 /// <summary>
                 /// Erstellt eine Matrix, die eine Rotation um die X-Achse darstellt.
                 /// </summary>
-                /// <param name="angle"></param>
-                /// <returns></returns>
                 public static Matrix4x4 RotationX(double angle)
                 {
                     //Variablen vorbereiten
@@ -92,8 +90,6 @@ namespace Artentus
                 /// <summary>
                 /// Erstellt eine Matrix, die eine Rotation um die Y-Achse darstellt.
                 /// </summary>
-                /// <param name="angle"></param>
-                /// <returns></returns>
                 public static Matrix4x4 RotationY(double angle)
                 {
                     //Variablen vorbereiten
@@ -113,8 +109,6 @@ namespace Artentus
                 /// <summary>
                 /// Erstellt eine Matrix, die eine Rotation um die Z-Achse darstellt.
                 /// </summary>
-                /// <param name="angle"></param>
-                /// <returns></returns>
                 public static Matrix4x4 RotationZ(double angle)
                 {
                     //Variablen vorbereiten
@@ -134,8 +128,6 @@ namespace Artentus
                 /// <summary>
                 /// Erstellt eine Matrix, die eine Rotation darstellt.
                 /// </summary>
-                /// <param name="angle"></param>
-                /// <returns></returns>
                 public static Matrix4x4 Rotation(double angleX, double angleY, double angleZ)
                 {
                     //Einzelrotationen berechnen
@@ -149,8 +141,6 @@ namespace Artentus
                 /// <summary>
                 /// Erstellt eine Matrix, die eine Rotation darstellt.
                 /// </summary>
-                /// <param name="v"></param>
-                /// <returns></returns>
                 public static Matrix4x4 Rotation(Vector3 v)
                 {
                     return Matrix4x4.Rotation(v.X, v.Y, v.Z);
@@ -159,10 +149,6 @@ namespace Artentus
                 /// <summary>
                 /// Erstellt eine Matrix, die eine Skalierung darstellt.
                 /// </summary>
-                /// <param name="scaleX"></param>
-                /// <param name="scaleY"></param>
-                /// <param name="scaleZ"></param>
-                /// <returns></returns>
                 public static Matrix4x4 Scalation(double scaleX, double scaleY, double scaleZ)
                 {
                     var m = Matrix4x4.GetIdentity();
@@ -178,8 +164,6 @@ namespace Artentus
                 /// <summary>
                 /// Erstellt eine Matrix, die eine Skalierung darstellt.
                 /// </summary>
-                /// <param name="scale"></param>
-                /// <returns></returns>
                 public static Matrix4x4 Scalation(double scale)
                 {
                     return Matrix4x4.Scalation(scale, scale, scale);
@@ -188,10 +172,6 @@ namespace Artentus
                 /// <summary>
                 /// Erstellt eine Matrix, die eine Translation darstellt.
                 /// </summary>
-                /// <param name="x"></param>
-                /// <param name="y"></param>
-                /// <param name="z"></param>
-                /// <returns></returns>
                 public static Matrix4x4 Translation(double x, double y, double z)
                 {
                     var m = Matrix4x4.GetIdentity();
@@ -207,19 +187,30 @@ namespace Artentus
                 /// <summary>
                 /// Erstellt eine Matrix, die eine Translation darstellt.
                 /// </summary>
-                /// <param name="v"></param>
-                /// <returns></returns>
                 public static Matrix4x4 Translation(Vector3 v)
                 {
                     return Matrix4x4.Translation(v.X, v.Y, v.Z);
                 }
 
                 /// <summary>
+                /// Erstellt eine matrix, die eine Projektion darstellt.
+                /// </summary>
+                public static Matrix4x4 Projection(Vector3 viewPoint)
+                {
+                    var m = Matrix4x4.GetIdentity();
+
+                    //Werte zuweisen
+                    m[3, 3] = 0;
+                    m[2, 0] = -(viewPoint.X / viewPoint.Z);
+                    m[2, 1] = -(viewPoint.Y / viewPoint.Z);
+                    m[2, 3] = 1.0 / viewPoint.Z;
+
+                    return m;
+                }
+
+                /// <summary>
                 /// Wendet eine Matrix4x4 auf einen Vector4 an.
                 /// </summary>
-                /// <param name="m"></param>
-                /// <param name="v"></param>
-                /// <returns></returns>
                 public static Vector4 Multiply(Matrix4x4 m, Vector4 v)
                 {
                     //Matrix mit Vektor multiplizieren

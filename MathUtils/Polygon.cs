@@ -17,7 +17,6 @@ namespace Artentus
                 /// <summary>
                 /// Berechnet den Flächeninhalt dieses Polygons.
                 /// </summary>
-                /// <returns></returns>
                 public static double Area(this IPolygon value)
                 {
                     var points = value.GetPoints();
@@ -25,7 +24,7 @@ namespace Artentus
                     var j = 1;
                     for (int i = 0; i < points.Length; i++)
                     {
-                        ret += Vector2.GetVectorProduct(points[i].ToVector2(), points[j].ToVector2());
+                        ret += Point2D.GetVectorProduct(points[i], points[j]);
                         j++;
                         if (j == points.Length)
                             j = 0;
@@ -36,7 +35,6 @@ namespace Artentus
                 /// <summary>
                 /// Berechnet den Umfang dieses Polygons.
                 /// </summary>
-                /// <returns></returns>
                 public static double Perimeter(this IPolygon value)
                 {
                     var points = value.GetPoints();
@@ -55,17 +53,13 @@ namespace Artentus
                 /// <summary>
                 /// Bestimmt die convexe Hülle dieses Polygons.
                 /// </summary>
-                /// <returns></returns>
                 public static IPolygon ConvexHull(this IPolygon value)
                 {
-                    //Startpunkt bestimmen
                     var startPoint = value.GetPoints().OrderBy(item => item.Y).ThenBy(item => item.X).First();
 
-                    //Punkte sortieren
                     var comp = new AngleComparer(startPoint);
                     var sorted = value.GetPoints().OrderBy(item => item, comp).ToArray();
 
-                    //Stack vorbereiten
                     var result = new Stack<Point2D>();
                     result.Push(sorted[0]);
                     result.Push(sorted[1]);
@@ -77,11 +71,7 @@ namespace Artentus
 
                         result.Push(sorted[i]);
                     }
-
-                    //Polygon erzeugen
-                    var convexPoly = new GeneralPolygon();
-                    convexPoly.Points.AddRange(result);
-                    return convexPoly;
+                    return new CustomPolygon(result.ToArray());
                 }
 
                 private class AngleComparer : IComparer<Point2D>
@@ -120,7 +110,6 @@ namespace Artentus
                 /// <summary>
                 /// Berechnet den Mittelpunkt dieses Polygons.
                 /// </summary>
-                /// <returns></returns>
                 public static Point2D Center(this IPolygon value)
                 {
                     var x = 0.0;
@@ -134,7 +123,7 @@ namespace Artentus
                     {
                         var p1 = points[i];
                         var p2 = points[j];
-                        var vp = Vector2.GetVectorProduct(p1.ToVector2(), p2.ToVector2());
+                        var vp = Point2D.GetVectorProduct(p1, p2);
                         vectorProduct += vp;
                         x += (p1 + p2).X * vp;
                         y += (p1 + p2).Y * vp;
@@ -150,16 +139,12 @@ namespace Artentus
                 /// <summary>
                 /// Prüft, ob sich ein Punkt innerhalb dieses Polygons befindet.
                 /// </summary>
-                /// <param name="value"></param>
-                /// <param name="p"></param>
-                /// <returns></returns>
                 public static bool Contains(this IPolygon value, Point2D p)
                 {
                     var alpha = 0;
                     var points = value.GetPoints();
                     var v1 = points[points.Length - 1];
 
-                    //Startquadranten initialisieren
                     var q1 = 0;
                     if (v1.Y <= p.Y)
                         if (v1.X <= p.X)
@@ -173,7 +158,6 @@ namespace Artentus
 
                     foreach (var v2 in points)
                     {
-                        //Quadrant des Punktes bestimmen
                         var q2 = 0;
                         if (v2.Y <= p.Y)
                             if (v2.X <= p.X)
@@ -185,7 +169,6 @@ namespace Artentus
                         else
                             q2 = 2;
 
-                        //Quadrant auf Gesammtdrehung anwenden
                         switch ((q2 - q1) & 3)
                         {
                             case 0:
@@ -217,36 +200,37 @@ namespace Artentus
                 /// <summary>
                 /// Prüft, ob diese Polygon ein anderes komplett einschließt.
                 /// </summary>
-                /// <param name="first"></param>
-                /// <param name="second"></param>
-                /// <returns></returns>
                 public static bool Contains(this IPolygon first, IPolygon second)
                 {
                     foreach (var p in second.GetPoints())
                         if (!first.Contains(p))
                             return false;
-
                     return true;
                 }
 
                 /// <summary>
                 /// Prüft, ob sich dieses Polygon mit einem anderen überschneidet.
                 /// </summary>
-                /// <param name="first"></param>
-                /// <param name="second"></param>
-                /// <returns></returns>
-                public static bool IntersectsWith(this IPolygon first, IPolygon second)
+                public static bool IntersectsWith(this IPolygon first, IPolygon second, out Vector2 minimumTranslationVector)
                 {
-                    if (HasSeparatingAxis(first, second))
+                    double minOverlap = double.MaxValue;
+                    minimumTranslationVector = new Vector2();
+
+                    if (HasSeparatingAxis(first, second, ref minOverlap, ref minimumTranslationVector))
                         return false;
 
-                    if (HasSeparatingAxis(second, first))
+                    if (HasSeparatingAxis(second, first, ref minOverlap, ref minimumTranslationVector))
                         return false;
+
+                    Vector2 d = Center(first) - Center(second);
+                    if (Vector2.GetVectorProduct(d, minimumTranslationVector) > 0)
+                        minimumTranslationVector = -minimumTranslationVector;
+                    minimumTranslationVector = minOverlap * minimumTranslationVector;
 
                     return true;
-                }
+                }		
 
-                private static bool HasSeparatingAxis(IPolygon first, IPolygon second)
+                private static bool HasSeparatingAxis(IPolygon first, IPolygon second, ref double minOverlap, ref Vector2 axis)
                 {
                     var points = first.GetPoints();
 
@@ -255,14 +239,21 @@ namespace Artentus
                     {
                         var edge = points[i] - points[prev];
 
-                        var v = new Vector2(edge.Y, -edge.X);
+                        var v = edge.CrossProduct.Normalize();
 
                         double aMin, aMax, bMin, bMax;
                         ProjectPolygon(v, first, out aMin, out aMax);
                         ProjectPolygon(v, second, out bMin, out bMax);
 
+
                         if ((aMax < bMin) || (bMax < aMin))
                             return true;
+                        double overlapping = aMax < bMax ? aMax - bMin : bMax - aMin;
+                        if (overlapping < minOverlap)
+                        {
+                            minOverlap = overlapping;
+                            axis = v;
+                        }
 
                         prev = i;
                     }
@@ -273,12 +264,13 @@ namespace Artentus
                 private static void ProjectPolygon(Vector2 axis, IPolygon poly, out double min, out double max)
                 {
                     var points = poly.GetPoints();
-                    min = Vector.GetScalarProduct(axis, points[0]);
+                    var axisAsPoint = axis.As<Point2D>();
+                    min = Vector.GetScalarProduct(axisAsPoint, points[0]);
                     max = min;
 
                     for (int i = 1; i < points.Length; i++)
                     {
-                        var d = Vector.GetScalarProduct(axis, points[i]);
+                        var d = Vector.GetScalarProduct(axisAsPoint, points[i]);
                         if (d < min)
                             min = d;
                         if (d > max)
@@ -289,8 +281,6 @@ namespace Artentus
                 /// <summary>
                 /// Gibt die Boundingbox dieses Polygons zurück.
                 /// </summary>
-                /// <param name="value"></param>
-                /// <returns></returns>
                 public static RectangleF BoundingBox(this IPolygon value)
                 {
                     var minX = double.MaxValue;

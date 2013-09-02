@@ -122,11 +122,7 @@ namespace Artentus
                 /// <returns></returns>
                 public Vector3 ProjectPerspective(Size deviceSize, Vector3 viewPoint)
                 {
-                    var perspectiveMatrix = Matrix4x4.GetIdentity();
-                    perspectiveMatrix[3, 3] = 0;
-                    perspectiveMatrix[2, 0] = -(viewPoint.X / viewPoint.Z);
-                    perspectiveMatrix[2, 1] = -(viewPoint.Y / viewPoint.Z);
-                    perspectiveMatrix[2, 3] = 1.0 / viewPoint.Z;
+                    var perspectiveMatrix = Matrix4x4.Projection(viewPoint);
 
                     var vectorInAspect = this;
                     if (deviceSize.Width > deviceSize.Height)
@@ -172,12 +168,12 @@ namespace Artentus
 
                 public static Vector4 operator +(Vector4 left, Vector4 right)
                 {
-                    return (Vector4)Vector.Add(left, right);
+                    return Vector.Add(left, right);
                 }
 
                 public static Vector4 operator -(Vector4 left, Vector4 right)
                 {
-                    return (Vector4)Vector.Subtract(left, right);
+                    return Vector.Subtract(left, right);
                 }
 
                 public static Vector4 operator -(Vector4 value)
@@ -187,17 +183,17 @@ namespace Artentus
 
                 public static Vector4 operator *(Vector4 left, Vector4 right)
                 {
-                    return (Vector4)Vector.Multiply(left, right);
+                    return Vector.Multiply(left, right);
                 }
 
                 public static Vector4 operator *(Vector4 value, double skalar)
                 {
-                    return (Vector4)Vector.Multiply(value, skalar);
+                    return Vector.Multiply(value, skalar);
                 }
 
                 public static Vector4 operator *(double skalar, Vector4 value)
                 {
-                    return (Vector4)Vector.Multiply(value, skalar);
+                    return Vector.Multiply(value, skalar);
                 }
             }
         }

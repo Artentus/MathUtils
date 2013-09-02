@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Diagnostics;
+using System.Numerics;
 
 namespace Artentus
 {
@@ -351,8 +352,6 @@ namespace Artentus
                 /// <summary>
                 /// Prüft, ob eine Gleitkommazahl einen ganzzahligen Wert besitzt.
                 /// </summary>
-                /// <param name="value"></param>
-                /// <returns></returns>
                 public static bool IsInt(double value)
                 {
                     return value == (long)value;
@@ -361,8 +360,6 @@ namespace Artentus
                 /// <summary>
                 /// Prüft, ob eine Gleitkommazahl einen ganzzahligen Wert besitzt.
                 /// </summary>
-                /// <param name="value"></param>
-                /// <returns></returns>
                 public static bool IsInt(float value)
                 {
                     return value == (long)value;
@@ -371,8 +368,6 @@ namespace Artentus
                 /// <summary>
                 /// Prüft, ob eine Gleitkommazahl einen ganzzahligen Wert besitzt.
                 /// </summary>
-                /// <param name="value"></param>
-                /// <returns></returns>
                 public static bool IsInt(decimal value)
                 {
                     return value == (long)value;
@@ -381,12 +376,19 @@ namespace Artentus
                 /// <summary>
                 /// Berechnet die n-te Wurzel einer Zahl.
                 /// </summary>
-                /// <param name="radicant"></param>
-                /// <param name="degree"></param>
-                /// <returns></returns>
                 public static double NthRoot(double radicant, double degree)
                 {
                     return System.Math.Pow(radicant, 1 / degree);
+                }
+
+                /// <summary>
+                /// Potenziert einen BigInteger mit einem anderen.
+                /// </summary>
+                public static BigInteger BigIntPow(BigInteger @base, BigInteger exponent)
+                {
+                    if (exponent == 0) return 1;
+                    if (exponent < 0) return 0;
+                    return BigIntPow(@base * @base, exponent >> 1) * @base;
                 }
             }
         }

@@ -9,10 +9,7 @@ namespace Artentus
     {
         namespace Math
         {
-            /// <summary>
-            /// Ein dreidimensionaler Vektor.
-            /// </summary>
-            public struct Vector3 : IVector
+            public struct Point3D : IVector
             {
                 /// <summary>
                 /// Die X-Koordinate.
@@ -37,8 +34,6 @@ namespace Artentus
                 /// <summary>
                 /// Gibt die Koordinate an dem angegebenen Index zurück oder legt diese fest.
                 /// </summary>
-                /// <param name="index"></param>
-                /// <returns></returns>
                 public double this[int index]
                 {
                     get
@@ -75,12 +70,9 @@ namespace Artentus
                 }
 
                 /// <summary>
-                /// Erstellt einen neuen Vector3.
+                /// Erstellt einen neuen Point3D.
                 /// </summary>
-                /// <param name="x"></param>
-                /// <param name="y"></param>
-                /// <param name="z"></param>
-                public Vector3(double x, double y, double z)
+                public Point3D(double x, double y, double z)
                     : this()
                 {
                     X = x;
@@ -89,26 +81,22 @@ namespace Artentus
                 }
 
                 /// <summary>
-                /// Erstellt einen neuen Vector3.
+                /// Erstellt einen neuen Point3D.
                 /// </summary>
-                /// <param name="v"></param>
-                public Vector3(Vector3 v)
+                public Point3D(Point3D p)
                     : this()
                 {
-                    X = v.X;
-                    Y = v.Y;
-                    Z = v.Z;
+                    X = p.X;
+                    Y = p.Y;
+                    Z = p.Z;
                 }
 
                 /// <summary>
                 /// Berechnet das Kreuzprodukt (Vektorprodukt im R3) aus zwei Vektoren.
                 /// </summary>
-                /// <param name="left"></param>
-                /// <param name="right"></param>
-                /// <returns></returns>
-                public static Vector3 GetCrossProduct(Vector3 left, Vector3 right)
+                public static Point3D GetCrossProduct(Point3D left, Point3D right)
                 {
-                    return new Vector3(left.Y * right.Z - left.Z * right.Y, left.Z * right.X - left.X * right.Z, left.X * right.Y - left.Y * right.X);
+                    return new Point3D(left.Y * right.Z - left.Z * right.Y, left.Z * right.X - left.X * right.Z, left.X * right.Y - left.Y * right.X);
                 }
 
                 public IEnumerator<double> GetEnumerator()
@@ -126,34 +114,29 @@ namespace Artentus
                     return Vector.CheckForEquality(this, other);
                 }
 
-                public static Vector3 operator +(Vector3 left, Vector3 right)
+                public static Point3D operator +(Point3D left, Point3D right)
                 {
-                    return (Vector3)Vector.Add(left, right);
+                    return Vector.Add(left, right);
                 }
 
-                public static Vector3 operator -(Vector3 left, Vector3 right)
+                public static Point3D operator +(Point3D left, Vector3 right)
                 {
-                    return (Vector3)Vector.Subtract(left, right);
+                    return Vector.Add(left, right.As<Point3D>());
                 }
 
-                public static Vector3 operator -(Vector3 value)
+                public static Point3D operator -(Point3D left, Vector3 right)
                 {
-                    return new Vector3(-value.X, -value.Y, -value.Z);
+                    return Vector.Subtract(left, right.As<Point3D>());
                 }
 
-                public static Vector3 operator *(Vector3 left, Vector3 right)
+                public static Vector3 operator -(Point3D left, Point3D right)
                 {
-                    return (Vector3)Vector.Multiply(left, right);
+                    return Vector.Subtract(left, right).As<Vector3>();
                 }
 
-                public static Vector3 operator *(Vector3 value, double skalar)
+                public static Point3D operator -(Point3D value)
                 {
-                    return (Vector3)Vector.Multiply(value, skalar);
-                }
-
-                public static Vector3 operator *(double skalar, Vector3 value)
-                {
-                    return (Vector3)Vector.Multiply(value, skalar);
+                    return new Point3D(-value.X, -value.Y, -value.Z);
                 }
             }
         }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Artentus
 {
@@ -178,15 +179,27 @@ namespace Artentus
                     }
                 }
 
-                private static string ReduceString(string s, int count)
+                private static bool StartsWith(this StringBuilder sb, string value)
                 {
-                    if (s.Length > count)
-                        return s.Substring(count);
-                    else
-                        return string.Empty;
+                    if (sb.Length < value.Length)
+                        return false;
+
+                    for (int i = 0; i < value.Length; i++)
+                        if (sb[i] != value[i])
+                            return false;
+                    
+                    return true;
                 }
 
-                private static List<Token> GetInfixTokens(string term)
+                private static bool StartsWith(this StringBuilder sb, char value)
+                {
+                    if (sb.Length < 1)
+                        return false;
+
+                    return value == sb[0];
+                }
+
+                private static Token[] GetInfixTokens(string term)
                 {
                     //Leerzeichen entfernen und in Kleinbuchstaben konvertieren
                     term = term.Replace(" ", string.Empty).ToLowerInvariant();
@@ -197,14 +210,16 @@ namespace Artentus
                     var numbers = parserRegEx.Matches(term);
                     term = parserRegEx.Replace(term, "1");
 
+                    var sb = new StringBuilder(term);
+
                     //Term in Tokens teilen
                     var numberIndex = 0;
-                    while (term.Length > 0)
+                    while (sb.Length > 0)
                     {
                         var validToken = false;
 
                         //Zahlen prüfen
-                        if (term.StartsWith("1"))
+                        if (sb.StartsWith("1"))
                         {
                             var t = new NumberToken();
                             t.ParseFromString(numbers[numberIndex].Groups["number"].Value);
@@ -212,15 +227,18 @@ namespace Artentus
 
                             numberIndex++;
 
-                            term = ReduceString(term, 1);
+                            //term = ReduceString(term, 1);
+                            sb.Remove(0, 1);
 
                             validToken = true;
                         }
 
                         //Operatoren prüfen
                         if (!validToken)
-                            foreach (var token in operators)
-                                if (term.StartsWith(token.ToString()))
+                            for (int i = 0; i < operators.Length; i++)
+                            {
+                                var token = operators[i];
+                                if (sb.StartsWith(token))
                                 {
                                     var t = new OperatorToken();
 
@@ -234,73 +252,84 @@ namespace Artentus
 
                                     tokens.Add(t);
 
-                                    term = ReduceString(term, 1);
+                                    //term = ReduceString(term, 1);
+                                    sb.Remove(0, 1);
 
                                     validToken = true;
                                     break;
                                 }
+                            }
 
                         //Funktionen prüfen
                         if (!validToken)
-                            foreach (var token in functions)
-                                if (term.StartsWith(token))
+                            for (int i = 0; i < functions.Length; i++)
+                            {
+                                var token = functions[i];
+                                if (sb.StartsWith(token))
                                 {
                                     var t = new FunctionToken();
                                     t.ParseFromString(token);
                                     tokens.Add(t);
 
-                                    term = ReduceString(term, token.Length);
+                                    //term = ReduceString(term, token.Length);
+                                    sb.Remove(0, token.Length);
 
                                     validToken = true;
                                     break;
                                 }
+                            }
 
                         //Rest prüfen
                         if (!validToken)
                         {
-                            if (term.StartsWith("pi")) //Pi
+                            if (sb.StartsWith("pi")) //Pi
                             {
                                 var t = new NumberToken();
                                 t.ParseFromString(System.Math.PI.ToString());
                                 tokens.Add(t);
 
-                                term = ReduceString(term, 2);
+                                //term = ReduceString(term, 2);
+                                sb.Remove(0, 2);
                             }
 
-                            else if (term.StartsWith("e")) //e
+                            else if (sb.StartsWith("e")) //e
                             {
                                 var t = new NumberToken();
                                 t.ParseFromString(System.Math.E.ToString());
                                 tokens.Add(t);
 
-                                term = ReduceString(term, 1);
+                                //term = ReduceString(term, 1);
+                                sb.Remove(0, 1);
                             }
 
-                            else if (term.StartsWith("(")) //öffnende Klammer
+                            else if (sb.StartsWith("(")) //öffnende Klammer
                             {
                                 var t = new SpecialToken();
                                 t.ParseFromString("(");
                                 tokens.Add(t);
 
-                                term = ReduceString(term, 1);
+                                //term = ReduceString(term, 1);
+                                sb.Remove(0, 1);
                             }
 
-                            else if (term.StartsWith(")")) //schließende Klammer
+                            else if (sb.StartsWith(")")) //schließende Klammer
                             {
                                 var t = new SpecialToken();
                                 t.ParseFromString(")");
                                 tokens.Add(t);
 
-                                term = ReduceString(term, 1);
+                                //term = ReduceString(term, 1);
+                                sb.Remove(0, 1);
                             }
 
-                            else if (term.StartsWith(";")) //Argumenttrennzeichen
+                            else if (sb.StartsWith(";")) //Argumenttrennzeichen
                             {
                                 var t = new SpecialToken();
                                 t.ParseFromString(";");
                                 tokens.Add(t);
 
-                                term = ReduceString(term, 1);
+                                //term = ReduceString(term, 1);
+                                sb.Remove(0, 1);
                             }
 
                             else //Token nicht bekannt
@@ -308,17 +337,19 @@ namespace Artentus
                         }  
                     }   
 
-                    return tokens;
+                    return tokens.ToArray();
                 }
 
-                private static List<Token> GetPostfixTokens(List<Token> infixTokens)
+                private static Token[] GetPostfixTokens(Token[] infixTokens)
                 {
                     var opStack = new Stack<Token>();
-                    var result = new List<Token>(infixTokens.Count);
+                    var result = new List<Token>(infixTokens.Length);
 
                     //alle Tokens abarbeiten
-                    foreach (var token in infixTokens)
+                    for (int i = 0; i < infixTokens.Length; i++ )
                     {
+                        var token = infixTokens[i];
+
                         //bei Zahl
                         if (token is NumberToken)
                             result.Add(token);
@@ -363,7 +394,7 @@ namespace Artentus
                     while (opStack.Count > 0)
                         result.Add(opStack.Pop());
 
-                    return result;
+                    return result.ToArray();
                 }
 
                 /// <summary>
@@ -380,8 +411,8 @@ namespace Artentus
                     var result = new Stack<double>();
                 
                     //Ausrechnen
-                    foreach (var token in tokens)
-                        token.Eval(result);
+                    for (int i = 0; i < tokens.Length; i++)
+                        tokens[i].Eval(result);
 
                     return result.Pop();
                 }

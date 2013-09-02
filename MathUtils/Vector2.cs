@@ -32,8 +32,6 @@ namespace Artentus
                 /// <summary>
                 /// Gibt die Koordinate an dem angegebenen Index zurück oder legt diese fest.
                 /// </summary>
-                /// <param name="index"></param>
-                /// <returns></returns>
                 public double this[int index]
                 {
                     get
@@ -67,8 +65,6 @@ namespace Artentus
                 /// <summary>
                 /// Erstellt einen neuen Vector2.
                 /// </summary>
-                /// <param name="x"></param>
-                /// <param name="y"></param>
                 public Vector2(double x, double y)
                     : this()
                 {
@@ -79,7 +75,6 @@ namespace Artentus
                 /// <summary>
                 /// Erstellt einen neuen Vector2.
                 /// </summary>
-                /// <param name="v"></param>
                 public Vector2(Vector2 v)
                     : this()
                 {
@@ -88,14 +83,30 @@ namespace Artentus
                 }
 
                 /// <summary>
+                /// Gibt das Kreuzprodukt dieses Vektors zurück.
+                /// </summary>
+                public Vector2 CrossProduct
+                {
+                    get
+                    {
+                        return new Vector2(-Y, X);
+                    }
+                }
+
+                /// <summary>
                 /// Berechnet das Vektorprodukt aus zwei Vektoren.
                 /// </summary>
-                /// <param name="left"></param>
-                /// <param name="right"></param>
-                /// <returns></returns>
                 public static double GetVectorProduct(Vector2 left, Vector2 right)
                 {
                     return left.X * right.Y - left.Y * right.X;
+                }
+
+                /// <summary>
+                /// Berechnet den Winkel zwischen zwei Vektoren.
+                /// </summary>
+                public static double GetAngle(Vector2 v1, Vector2 v2)
+                {
+                    return System.Math.Atan2(v1.Y, v1.X) - System.Math.Atan2(v2.Y, v2.X);
                 }
 
                 public IEnumerator<double> GetEnumerator()
@@ -115,12 +126,12 @@ namespace Artentus
 
                 public static Vector2 operator +(Vector2 left, Vector2 right)
                 {
-                    return (Vector2)Vector.Add(left, right);
+                    return Vector.Add(left, right);
                 }
 
                 public static Vector2 operator -(Vector2 left, Vector2 right)
                 {
-                    return (Vector2)Vector.Subtract(left, right);
+                    return Vector.Subtract(left, right);
                 }
 
                 public static Vector2 operator -(Vector2 value)
@@ -130,17 +141,17 @@ namespace Artentus
 
                 public static Vector2 operator *(Vector2 left, Vector2 right)
                 {
-                    return (Vector2)Vector.Multiply(left, right);
+                    return Vector.Multiply(left, right);
                 }
 
                 public static Vector2 operator *(Vector2 value, double skalar)
                 {
-                    return (Vector2)Vector.Multiply(value, skalar);
+                    return Vector.Multiply(value, skalar);
                 }
 
                 public static Vector2 operator *(double skalar, Vector2 value)
                 {
-                    return (Vector2)Vector.Multiply(value, skalar);
+                    return Vector.Multiply(value, skalar);
                 }
             }
         }
