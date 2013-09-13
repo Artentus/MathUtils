@@ -43,8 +43,6 @@ namespace Artentus
                 /// <summary>
                 /// Gibt die Koordinate an dem angegebenen Index zurück oder legt diese fest.
                 /// </summary>
-                /// <param name="index"></param>
-                /// <returns></returns>
                 public double this[int index]
                 {
                     get
@@ -88,10 +86,6 @@ namespace Artentus
                 /// <summary>
                 /// Erstellt einen neuen Vector4.
                 /// </summary>
-                /// <param name="x"></param>
-                /// <param name="y"></param>
-                /// <param name="z"></param>
-                /// <param name="w"></param>
                 public Vector4(double x, double y, double z, double w)
                     : this()
                 {
@@ -104,7 +98,6 @@ namespace Artentus
                 /// <summary>
                 /// Erstellt einen neuen Vector4.
                 /// </summary>
-                /// <param name="v"></param>
                 public Vector4(Vector4 v)
                     : this()
                 {
@@ -117,9 +110,6 @@ namespace Artentus
                 /// <summary>
                 /// Projeziert diesen dreidimensionalen Vektor in die zweidimensionale Ebene.
                 /// </summary>
-                /// <param name="deviceSize">Die Abmessungen der Zeichenfläche.</param>
-                /// <param name="viewPoint">Der Betrachterpunkt.</param>
-                /// <returns></returns>
                 public Vector3 ProjectPerspective(Size deviceSize, Vector3 viewPoint)
                 {
                     var perspectiveMatrix = Matrix4x4.Projection(viewPoint);
@@ -144,8 +134,6 @@ namespace Artentus
                 /// <summary>
                 /// Projeziert diesen dreidimensionalen Vektor in die zweidimensionale Ebene. Als Viewpoint wird dabei (0 0 1) verwendet.
                 /// </summary>
-                /// <param name="deviceSize">Die Abmessungen der Zeichenfläche.</param>
-                /// <returns></returns>
                 public Vector3 ProjectPerspective(Size deviceSize)
                 {
                     return ProjectPerspective(deviceSize, new Vector3(0, 0, 1));
@@ -178,12 +166,7 @@ namespace Artentus
 
                 public static Vector4 operator -(Vector4 value)
                 {
-                    return new Vector4(-value.X, -value.Y, -value.Z, -value.W);
-                }
-
-                public static Vector4 operator *(Vector4 left, Vector4 right)
-                {
-                    return Vector.Multiply(left, right);
+                    return Vector.Negate(value);
                 }
 
                 public static Vector4 operator *(Vector4 value, double skalar)

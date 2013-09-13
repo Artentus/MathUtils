@@ -384,11 +384,21 @@ namespace Artentus
                 /// <summary>
                 /// Potenziert einen BigInteger mit einem anderen.
                 /// </summary>
+                /// <remarks>
+                /// Es werden keine negativen Exponenten zugelassen.
+                /// </remarks>
                 public static BigInteger BigIntPow(BigInteger @base, BigInteger exponent)
                 {
-                    if (exponent == 0) return 1;
-                    if (exponent < 0) return 0;
-                    return BigIntPow(@base * @base, exponent >> 1) * @base;
+                    if (exponent < 0) throw new ArgumentException("Negative Exponenten sind nicht erlaubt.");
+                    BigInteger result = 1;
+                    while (exponent > 0)
+                    {
+                        if ((exponent & 1) != 0)
+                            result *= @base;
+                        exponent >>= 1;
+                        @base *= @base;
+                    }
+                    return result;
                 }
             }
         }

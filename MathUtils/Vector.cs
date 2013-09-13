@@ -19,14 +19,17 @@ namespace Artentus
                 /// Berechnet die euklidische Länge dieses Vektors.
                 /// </summary>
                 public static double Length(this IVector source)
-                {             
-                    return System.Math.Sqrt(source.Sum(val => val * val));
+                {
+                    double result = 0;
+                    for (int i = 0; i < source.Dimension; i++)
+                        result += source[i] * source[i];
+                    return System.Math.Sqrt(result);
                 }
 
                 /// <summary>
                 /// Berechnet die Entfernung von diesem Vektor zu einem anderen.
                 /// </summary>
-                public static double DistanceTo<T>(this T first, T second) where T : IVector, new()
+                public static double DistanceTo<T>(this T first, T second) where T : IVector
                 {
                     return Vector.Subtract(first, second).Length();
                 }
@@ -36,7 +39,7 @@ namespace Artentus
                 /// </summary>
                 public static Matrix ToHorizontalMatrix(this IVector source)
                 {
-                    var m = new Matrix(source.Dimension, 1);
+                    Matrix m = new Matrix(source.Dimension, 1);
                     for (int i = 0; i < source.Dimension; i++)
                         m[i, 0] = source[i];
                     return m;
@@ -47,7 +50,7 @@ namespace Artentus
                 /// </summary>
                 public static Matrix ToVerticalMatrix(this IVector source)
                 {
-                    var m = new Matrix(1, source.Dimension);
+                    Matrix m = new Matrix(1, source.Dimension);
                     for (int i = 0; i < source.Dimension; i++)
                         m[0, i] = source[i];
                     return m;
@@ -58,24 +61,23 @@ namespace Artentus
                 /// </summary>
                 public static T Normalize<T>(this T source) where T : IVector
                 {
-                    return source.Multiply(1 / source.Length());
+                    return Vector.Multiply(source, 1 / source.Length());
                 }
 
                 /// <summary>
-                /// Multipliziert zwei Vektoren miteinander.
+                /// Negiert diesen Vektor.
                 /// </summary>
-                public static T Multiply<T>(T left, T right) where T : IVector, new()
+                public static T Negate<T>(this T source) where T : IVector
                 {
-                    var result = new T();
-                    for (int i = 0; i < left.Dimension; i++)
-                        result[i] = left[i] * right[i];
-                    return result;
+                    for (int i = 0; i < source.Dimension; i++)
+                        source[i] = -source[i];
+                    return source;
                 }
 
                 /// <summary>
                 /// Multipliziert einen Vektor mit einem Skalarfaktor.
                 /// </summary>
-                public static T Multiply<T>(this T value, double skalar) where T : IVector
+                public static T Multiply<T>(T value, double skalar) where T : IVector
                 {
                     for (int i = 0; i < value.Dimension; i++)
                         value[i] *= skalar;
@@ -85,31 +87,32 @@ namespace Artentus
                 /// <summary>
                 /// Addiert zwei Vektoren miteinander.
                 /// </summary>
-                public static T Add<T>(T left, T right) where T : IVector, new()
+                public static T Add<T>(T left, T right) where T : IVector
                 {
-                    var result = new T();
                     for (int i = 0; i < left.Dimension; i++)
-                        result[i] = left[i] + right[i];
-                    return result;
+                        left[i] += right[i];
+                    return left;
                 }
 
                 /// <summary>
                 /// Subtrahiert zwei Vektoren voneinander.
                 /// </summary>
-                public static T Subtract<T>(T left, T right) where T : IVector, new()
+                public static T Subtract<T>(T left, T right) where T : IVector
                 {
-                    var result = new T();
                     for (int i = 0; i < left.Dimension; i++)
-                        result[i] = left[i] - right[i];
-                    return result;
+                        left[i] -= right[i];
+                    return left;
                 }
 
                 /// <summary>
                 /// Berechnet das Skalarprodukt aus zwei Vektoren.
                 /// </summary>
-                public static double GetScalarProduct<T>(T left, T right) where T : IVector, new()
+                public static double DotProduct<T>(this T first, T second) where T : IVector
                 {
-                    return Vector.Multiply(left, right).Sum();
+                    double result = 0;
+                    for (int i = 0; i < first.Dimension; i++)
+                        result += first[i] * second[i];
+                    return result;
                 }
 
                 /// <summary>
@@ -117,13 +120,21 @@ namespace Artentus
                 /// </summary>
                 public static bool CheckForEquality(IVector left, IVector right)
                 {
-                    var maxDimension = System.Math.Max(left.Dimension, right.Dimension);
+                    int maxDimension = System.Math.Max(left.Dimension, right.Dimension);
                     for (int i = 0; i < maxDimension; i++)
                     {
                         if ((i < left.Dimension ? left[i] : 0) != (i < right.Dimension ? right[i] : 0))
                             return false;
                     }
                     return true;
+                }
+
+                /// <summary>
+                /// Prüft, ob dieser Vektor einem anderen gleicht.
+                /// </summary>
+                public static bool Equals<T>(this T first, T second) where T : IVector
+                {
+                    return Vector.CheckForEquality(first, second);
                 }
 
                 /// <summary>

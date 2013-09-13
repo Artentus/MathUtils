@@ -172,7 +172,7 @@ namespace Artentus
 
                 public static Point2D operator -(Point2D value)
                 {
-                    return new Point2D(-value.X, -value.Y);
+                    return Vector.Negate(value);
                 }
             }
         }

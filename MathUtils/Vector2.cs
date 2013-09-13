@@ -136,12 +136,7 @@ namespace Artentus
 
                 public static Vector2 operator -(Vector2 value)
                 {
-                    return new Vector2(-value.X, -value.Y);
-                }
-
-                public static Vector2 operator *(Vector2 left, Vector2 right)
-                {
-                    return Vector.Multiply(left, right);
+                    return Vector.Negate(value);
                 }
 
                 public static Vector2 operator *(Vector2 value, double skalar)

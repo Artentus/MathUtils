@@ -129,12 +129,7 @@ namespace Artentus
 
                 public static Vector3 operator -(Vector3 value)
                 {
-                    return new Vector3(-value.X, -value.Y, -value.Z);
-                }
-
-                public static Vector3 operator *(Vector3 left, Vector3 right)
-                {
-                    return Vector.Multiply(left, right);
+                    return Vector.Negate(value);
                 }
 
                 public static Vector3 operator *(Vector3 value, double skalar)

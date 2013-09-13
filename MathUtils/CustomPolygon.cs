@@ -57,12 +57,12 @@ namespace Artentus
 
                 public IEnumerator<Point2D> GetEnumerator()
                 {
-                    return new PolygonEnumerator(this);
+                    return (points as IEnumerable<Point2D>).GetEnumerator();
                 }
 
                 System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
                 {
-                    return new PolygonEnumerator(this);
+                    return points.GetEnumerator();
                 }
             }
         }

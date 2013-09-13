@@ -136,7 +136,7 @@ namespace Artentus
 
                 public static Point3D operator -(Point3D value)
                 {
-                    return new Point3D(-value.X, -value.Y, -value.Z);
+                    return Vector.Negate(value);
                 }
             }
         }

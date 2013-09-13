@@ -265,12 +265,12 @@ namespace Artentus
                 {
                     var points = poly.GetPoints();
                     var axisAsPoint = axis.As<Point2D>();
-                    min = Vector.GetScalarProduct(axisAsPoint, points[0]);
+                    min = Vector.DotProduct(axisAsPoint, points[0]);
                     max = min;
 
                     for (int i = 1; i < points.Length; i++)
                     {
-                        var d = Vector.GetScalarProduct(axisAsPoint, points[i]);
+                        var d = Vector.DotProduct(axisAsPoint, points[i]);
                         if (d < min)
                             min = d;
                         if (d > max)

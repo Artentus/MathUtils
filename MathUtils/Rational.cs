@@ -144,7 +144,7 @@ namespace Artentus
                     {
                         BigInteger num;
                         BigInteger denom;
-                        if (!(BigInteger.TryParse(parts[0], intStyle, provider, out num) && BigInteger.TryParse(parts[0], intStyle, provider, out denom))) return false;
+                        if (!(BigInteger.TryParse(parts[0], intStyle, provider, out num) && BigInteger.TryParse(parts[1], intStyle, provider, out denom))) return false;
                         result = new Rational(num, denom);
                         return true;
                     }
@@ -164,7 +164,7 @@ namespace Artentus
                         }
                         NumberFormatInfo info = NumberFormatInfo.GetInstance(provider);
                         int decimalSeparatorIndex = s.IndexOf(info.NumberDecimalSeparator);
-                        if (decimalSeparatorIndex > 1)
+                        if (decimalSeparatorIndex > -1)
                         {
                             if ((style & NumberStyles.AllowDecimalPoint) == NumberStyles.None) return false;
                             if (s.LastIndexOf(info.NumberDecimalSeparator) != decimalSeparatorIndex) return false;
@@ -174,8 +174,8 @@ namespace Artentus
                                     decimalPlacesToShift--;
                             }
                             s = s.Replace(info.NumberDecimalSeparator, string.Empty);
-                            if (!BigInteger.TryParse(s, intStyle, provider, out num)) return false;
                         }
+                        if (!BigInteger.TryParse(s, intStyle, provider, out num)) return false;
                         if (decimalPlacesToShift < 0)
                             denom = MathHelper.BigIntPow(10, BigInteger.Abs(decimalPlacesToShift));
                         else
@@ -421,6 +421,49 @@ namespace Artentus
                         return new Rational(MathHelper.BigIntPow(@base.Numerator, exponent), MathHelper.BigIntPow(@base.Denominator, exponent));
                 }
 
+                ///// <summary>
+                ///// Potenziert einen Rational.
+                ///// </summary>
+                ///// <returns>
+                ///// Gibt das Ergebnis der Potenz zurück.
+                ///// </returns>
+                ///// <exception cref="System.ArgumentException">Wird ausgelöst, wenn <paramref name="base"/>, <paramref name="exponent"/> oder <paramref name="epsilon"/> NaN ist, oder wenn <paramref name="base"/> negativ ist.</exception>
+                //public static Rational Pow(Rational @base, Rational exponent, Rational epsilon)
+                //{
+                //    if (@base.IsNaN) throw new ArgumentException(errorNaN, "base");
+                //    if (exponent.IsNaN) throw new ArgumentException(errorNaN, "exponent");
+                //    if (epsilon.IsNaN) throw new ArgumentException(errorNaN, "epsilon");
+                //    if (@base.Sign == -1) throw new ArgumentException("Die Basis darf bei einem gebrochenen Exponenten nicht negativ sein.", "base");
+                //    if (exponent == Rational.Zero) return Rational.One;
+                //    if (@base == Rational.Zero) return Rational.Zero;
+                //    Rational invertedDenom = Rational.Invert(exponent.Denominator);
+                //    Rational roundingVal = epsilon < 1 ? epsilon * epsilon : Rational.Sqrt(epsilon);
+                //    Rational result = @base;
+                //    Rational delta = 0;
+                //    do
+                //    {
+                //        delta = invertedDenom * (@base / Rational.Pow(result, exponent.Denominator - 1) - result);
+                //        result -= delta;
+                //        result -= result % roundingVal;
+                //    } while (Rational.Abs(delta) > epsilon);
+                //    return Rational.Pow(result, exponent.Numerator);
+                //}
+
+                ///// <summary>
+                ///// Potenziert einen Rational.
+                ///// </summary>
+                ///// <returns>
+                ///// Gibt das Ergebnis der Potenz zurück.
+                ///// </returns>
+                ///// <exception cref="System.ArgumentException">Wird ausgelöst, wenn <paramref name="base"/> oder <paramref name="exponent"/> NaN ist.</exception>
+                //public static Rational Pow(Rational @base, Rational exponent)
+                //{
+                //    if (@base.IsNaN) throw new ArgumentException(errorNaN, "base");
+                //    if (exponent.IsNaN) throw new ArgumentException(errorNaN, "exponent");
+                //    Rational epsilon = @base * 1E-10m;
+                //    return Rational.Pow(@base, exponent, epsilon);
+                //}
+
                 /// <summary>
                 /// Negiert eine Rational-Instanz.
                 /// </summary>
@@ -466,20 +509,36 @@ namespace Artentus
                 /// Gibt die größte Ganzzahl zurück, die kleiner oder gleich der angegebenen Zahl ist.
                 /// </summary>
                 /// <exception cref="System.ArgumentException">Wird ausgelöst, wenn <paramref name="value"/> NaN ist.</exception>
-                public static Rational Floor(Rational value)
+                public static BigInteger Floor(Rational value)
                 {
                     if (value.IsNaN) throw new ArgumentException(errorNaN, "value");
-                    return value.Numerator / value.Denominator * value.Denominator;
+                    return value.Numerator / value.Denominator;
                 }
 
                 /// <summary>
                 /// Gibt die kleinste Ganzzahl zurück, die größer oder gleich der angegebenen Zahl ist.
                 /// </summary>
                 /// <exception cref="System.ArgumentException">Wird ausgelöst, wenn <paramref name="value"/> NaN ist.</exception>
-                public static Rational Ceiling(Rational value)
+                public static BigInteger Ceiling(Rational value)
                 {
                     if (value.IsNaN) throw new ArgumentException(errorNaN, "value");
                     return (value.Numerator + value.Denominator - 1) / value.Denominator * value.Denominator;
+                }
+
+                /// <summary>
+                /// Rundet die angegebene zahl auf die angegebene Anzahl an Nachkommastellen.
+                /// </summary>
+                /// <exception cref="System.ArgumentException">Wird ausgelöst, wenn <paramref name="value"/> NaN ist.</exception>
+                /// <exception cref="System.ArgumentOutOfRangeException">Wird ausgelöst, wenn <paramref name="decimalPlaces"/> kleiner als 0 ist.</exception>
+                public static Rational Round(Rational value, BigInteger decimalPlaces)
+                {
+                    if (value.IsNaN) throw new ArgumentException(errorNaN, "value");
+                    if (decimalPlaces < 0) throw new ArgumentOutOfRangeException("Die Anzahl an Dezimalstellen muss positiv sein.", "decimalPlaces");
+                    BigInteger factor = MathHelper.BigIntPow(10, decimalPlaces);
+                    Rational result = value * factor;
+                    result = Rational.Floor(result + 0.5m);
+                    result /= factor;
+                    return result;
                 }
 
                 /// <summary>
@@ -511,6 +570,39 @@ namespace Artentus
                     if (left < right) return left;
                     return right;
                 }
+
+                ///// <summary>
+                ///// Zieht die Quadratwurzel zum angegebenen Rational unter berücksichtigeng des angegebenen Epsilon.
+                ///// </summary>
+                ///// <returns>
+                ///// Gibt die Quadratwurzel des angegebenen Rational zurück.
+                ///// </returns>
+                ///// <exception cref="System.ArgumentException">Wird ausgelöst, wenn <paramref name="value"/> oder <paramref name="epsilon"/> NaN ist.</exception>
+                //public static Rational Sqrt(Rational value, Rational epsilon)
+                //{
+                //    if (value.IsNaN) throw new ArgumentException(errorNaN, "value");
+                //    if (epsilon.IsNaN) throw new ArgumentException(errorNaN, "epsilon");
+                //    if (value.Sign == -1) throw new ArgumentException("Negative Werte besitzen keine Quadratwurzel.");
+                //    if (value == Rational.Zero) return Rational.Zero;
+                //    Rational result = (value + 1) / 2;
+                //    while (Rational.Abs(value - result * result) > epsilon)
+                //        result = (result + value / result) / 2;
+                //    return result;
+                //}
+
+                ///// <summary>
+                ///// Zieht die Quadratwurzel zum angegebenen Rational.
+                ///// </summary>
+                ///// <returns>
+                ///// Gibt die Quadratwurzel des angegebenen Rational zurück.
+                ///// </returns>
+                ///// <exception cref="System.ArgumentException">Wird ausgelöst, wenn <paramref name="value"/> NaN ist.</exception>
+                //public static Rational Sqrt(Rational value)
+                //{
+                //    if (value.IsNaN) throw new ArgumentException(errorNaN, "value");
+                //    Rational epsilon = value * 1E-10m;
+                //    return Rational.Sqrt(value, epsilon);
+                //}
 
                 /// <summary>
                 /// Addiert zwei Rational-Instanzen miteinander.
@@ -548,6 +640,13 @@ namespace Artentus
                     return Rational.Remainder(left, right);
                 }
                 /// <summary>
+                /// Gibt <paramref name="value"/> zurück.
+                /// </summary>
+                public static Rational operator +(Rational value)
+                {
+                    return value;
+                }
+                /// <summary>
                 /// Negiert eine Rational-Instanz.
                 /// </summary>
                 public static Rational operator -(Rational value)
@@ -555,6 +654,9 @@ namespace Artentus
                     return Rational.Negate(value);
                 }
 
+                /// <summary>
+                /// Prüft zwei Rational-Instanzen auf Gleichheit.
+                /// </summary>
                 public static bool operator ==(Rational left, Rational right)
                 {
                     if (left.IsNaN || right.IsNaN) return false;
@@ -562,6 +664,9 @@ namespace Artentus
                     return (left.Numerator == right.Numerator && left.Denominator == right.Denominator);
                 }
 
+                /// <summary>
+                /// Prüft zwei Rational-Instanzen auf Ungleichheit.
+                /// </summary>
                 public static bool operator !=(Rational left, Rational right)
                 {
                     if (left.IsNaN || right.IsNaN) return true;
@@ -569,6 +674,9 @@ namespace Artentus
                     return (left.Numerator != right.Numerator || left.Denominator != right.Denominator);
                 }
 
+                /// <summary>
+                /// Prüft, ob eine Rational-Instanz kleiner als eine andere ist.
+                /// </summary>
                 public static bool operator <(Rational left, Rational right)
                 {
                     if (left.IsNaN || right.IsNaN) return false;
@@ -577,6 +685,9 @@ namespace Artentus
                     return left.Numerator * right.Denominator < right.Numerator * left.Denominator;
                 }
 
+                /// <summary>
+                /// Prüft, ob eine Rational-Instanz größer als eine andere ist.
+                /// </summary>
                 public static bool operator >(Rational left, Rational right)
                 {
                     if (left.IsNaN || right.IsNaN) return false;
@@ -585,6 +696,9 @@ namespace Artentus
                     return left.Numerator * right.Denominator > right.Numerator * left.Denominator;
                 }
 
+                /// <summary>
+                /// Prüft, ob eine Rational-Instanz kleiner oder gleich einer anderen ist.
+                /// </summary>
                 public static bool operator <=(Rational left, Rational right)
                 {
                     if (left.IsNaN || right.IsNaN) return false;
@@ -593,6 +707,9 @@ namespace Artentus
                     return left.Numerator * right.Denominator <= right.Numerator * left.Denominator;
                 }
 
+                /// <summary>
+                /// Prüft, ob eine Rational-Instanz größer oder gleich einer anderen ist.
+                /// </summary>
                 public static bool operator >=(Rational left, Rational right)
                 {
                     if (left.IsNaN || right.IsNaN) return false;
@@ -630,11 +747,13 @@ namespace Artentus
                 {
                     if (denominator == 0)
                     {
+                        Numerator = 0;
                         Denominator = 0;
                         return;
                     }
                     if (numerator == 0)
                     {
+                        Numerator = 0;
                         Denominator = 1;
                         return;
                     }
@@ -1139,6 +1258,7 @@ namespace Artentus
                 /// <seealso cref="System.IFormatProvider"/>
                 public string ToString(int maxPlaces, IFormatProvider provider)
                 {
+                    if (maxPlaces < 1) throw new ArgumentException("Die maximale Anzahl sichtbarer Stellen muss größer als 0 sein.");
                     if (this.IsNaN) return CultureInfo.CurrentCulture.NumberFormat.NaNSymbol;
                     string intDigits;
                     string decimalDigits;
@@ -1189,7 +1309,11 @@ namespace Artentus
                     }
                     else if (intDigits.Length < maxPlaces)
                     {
-                        return string.Concat(intDigits, info.NumberDecimalSeparator, decimalDigits.Substring(0, maxPlaces - intDigits.Length).TrimEnd(new[] { '0' }));
+                        string visibleDecimalDigits = decimalDigits.Substring(0, maxPlaces - intDigits.Length).TrimEnd(new[] { '0' });
+                        if (visibleDecimalDigits.Length == 0)
+                            return intDigits;
+                        else
+                            return string.Concat(intDigits, info.NumberDecimalSeparator, visibleDecimalDigits);
                     }
                     else if (intDigits.Length == maxPlaces)
                     {

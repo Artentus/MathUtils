@@ -100,7 +100,7 @@ namespace Artentus
                 /// <returns></returns>
                 public double DistanceTo(Line3D other)
                 {
-                    return Vector.Multiply(P - other.P, Vector3.GetCrossProduct(V, other.V).Normalize()).Length();
+                    return Vector.DotProduct(P - other.P, Vector3.GetCrossProduct(V, other.V).Normalize());
                 }
             }
         }
