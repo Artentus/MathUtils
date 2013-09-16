@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Artentus.Utils.Math.MathHelper">
-    <Position X="28" Y="0.75" Width="2.25" />
+    <Position X="30.25" Y="0.75" Width="3.25" />
     <TypeIdentifier>
       <HashCode>AAgAAAABAIAAAAAgAAAggAIAAABAAAAAAAAQAAAQAAA=</HashCode>
       <FileName>MathHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Artentus.Utils.Math.SquareMatrix">
-    <Position X="13.75" Y="0.75" Width="2.25" />
+    <Position X="15" Y="0.75" Width="2.25" />
     <Members>
       <Method Name="GaussJordan" Hidden="true" />
       <Method Name="SolveLinearSystem" Hidden="true" />
@@ -20,7 +20,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Artentus.Utils.Math.Matrix4x4">
-    <Position X="13.75" Y="4.25" Width="2.25" />
+    <Position X="13.75" Y="4.5" Width="2.25" />
     <Members>
       <Method Name="Matrix4x4" Hidden="true" />
     </Members>
@@ -65,12 +65,12 @@
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAIAAAAAAAAAAACIEABDAABAAAAAQAAAAABAAAAAAgA=</HashCode>
+      <HashCode>AAIAQAAAAAAAAACIkAADAABAAAAAQAAAAABEAAAAAgA=</HashCode>
       <FileName>Vector.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Artentus.Utils.Geometry.Polygon">
-    <Position X="17.25" Y="0.75" Width="1.75" />
+    <Position X="20.5" Y="0.75" Width="1.75" />
     <Members>
       <Method Name="GetSweepDirection" Hidden="true" />
       <Method Name="HasSeparatingAxis" Hidden="true" />
@@ -90,7 +90,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Artentus.Utils.Math.VectorEnumerator">
-    <Position X="0.5" Y="4.25" Width="2" />
+    <Position X="0.5" Y="4.75" Width="2" />
     <Members>
       <Method Name="Dispose" Hidden="true" />
       <Field Name="index" Hidden="true" />
@@ -105,7 +105,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Artentus.Utils.Math.LinearEquation">
-    <Position X="26.25" Y="0.75" Width="1.5" />
+    <Position X="30" Y="3.75" Width="1.5" />
     <Members>
       <Method Name="LinearEquation" Hidden="true" />
     </Members>
@@ -115,13 +115,123 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Artentus.Utils.Math.LinearSystem">
-    <Position X="26.25" Y="2.25" Width="1.5" />
+    <Position X="28.25" Y="3.75" Width="1.5" />
     <Members>
       <Method Name="LinearSystem" Hidden="true" />
     </Members>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAIEAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>LinearSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Artentus.Utils.Geometry.CirclePolygon" BaseTypeListCollapsed="true">
+    <Position X="22.5" Y="0.75" Width="2" />
+    <Members>
+      <Method Name="CalculatePoints" Hidden="true" />
+      <Field Name="matrix" Hidden="true" />
+      <Field Name="points" Hidden="true" />
+      <Method Name="System.Collections.IEnumerable.GetEnumerator" Hidden="true" />
+      <Field Name="untransformedPoints" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>ACAAIACAAAAAABAAAAAAECAAQQAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>CirclePolygon.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Artentus.Utils.Geometry.CustomPolygon" BaseTypeListCollapsed="true">
+    <Position X="24.75" Y="3.25" Width="2" />
+    <Members>
+      <Field Name="matrix" Hidden="true" />
+      <Field Name="points" Hidden="true" />
+      <Method Name="System.Collections.IEnumerable.GetEnumerator" Hidden="true" />
+      <Field Name="untransformedPoints" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>ACAAIACAAAAAABAAAAAAECAAQAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>CustomPolygon.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Artentus.Utils.Geometry.EllipsePolygon" BaseTypeListCollapsed="true">
+    <Position X="22.5" Y="3.25" Width="2" />
+    <Members>
+      <Method Name="CalculatePoints" Hidden="true" />
+      <Field Name="matrix" Hidden="true" />
+      <Field Name="points" Hidden="true" />
+      <Method Name="System.Collections.IEnumerable.GetEnumerator" Hidden="true" />
+      <Field Name="untransformedPoints" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>ACAAIACAAAAAABAAAAAAECAAQQAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>EllipsePolygon.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Artentus.Utils.Geometry.RectanglePolygon" BaseTypeListCollapsed="true">
+    <Position X="24.75" Y="0.75" Width="2" />
+    <Members>
+      <Method Name="CalculatePoints" Hidden="true" />
+      <Field Name="matrix" Hidden="true" />
+      <Field Name="points" Hidden="true" />
+      <Method Name="System.Collections.IEnumerable.GetEnumerator" Hidden="true" />
+      <Field Name="untransformedPoints" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>ACAAIACAAAAAABAAAAAAECAAQQAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>RectanglePolygon.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Artentus.Utils.Math.Matrix3x3">
+    <Position X="16.25" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAIACYAABAAAAAAAEAAAIAAAAAAECAAA=</HashCode>
+      <FileName>Matrix3x3.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Artentus.Utils.Math.Parser">
+    <Position X="31.75" Y="3.75" Width="2" />
+    <Members>
+      <Field Name="functions" Hidden="true" />
+      <Method Name="GetInfixTokens" Hidden="true" />
+      <Method Name="GetPostfixTokens" Hidden="true" />
+      <Field Name="operators" Hidden="true" />
+      <Method Name="Parser" Hidden="true" />
+      <Field Name="parserRegEx" Hidden="true" />
+      <Field Name="possibleTokens" Hidden="true" />
+      <Method Name="StartsWith" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Class Name="Artentus.Utils.Math.Parser.Token" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Parser.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Artentus.Utils.Math.Parser.NumberToken" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Parser.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Artentus.Utils.Math.Parser.OperatorToken" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Parser.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Artentus.Utils.Math.Parser.FunctionToken" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Parser.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Artentus.Utils.Math.Parser.SpecialToken" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Parser.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>BACAAAAAIAAAAAAAAgIAAAAAAAAAAAAAAAAgAAoAAAA=</HashCode>
+      <FileName>Parser.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Struct Name="Artentus.Utils.Math.Vector2" BaseTypeListCollapsed="true">
@@ -161,7 +271,7 @@
     <Lollipop Position="0.2" />
   </Struct>
   <Struct Name="Artentus.Utils.Math.Point2D" BaseTypeListCollapsed="true">
-    <Position X="5.25" Y="4.25" Width="2.25" />
+    <Position X="5.25" Y="4.75" Width="2.25" />
     <Members>
       <Method Name="operator -" Hidden="true" />
       <Method Name="operator +" Hidden="true" />
@@ -189,7 +299,7 @@
     <Lollipop Position="0.2" />
   </Struct>
   <Struct Name="Artentus.Utils.Geometry.Line3D">
-    <Position X="24.25" Y="0.75" Width="1.75" />
+    <Position X="28.25" Y="0.75" Width="1.75" />
     <Members>
       <Method Name="IntersectsInner" Hidden="true" />
     </Members>
@@ -197,6 +307,20 @@
       <HashCode>AAAAIAAAAAAAAACAQgAAAAAAAAAQAAAAAEAAAABQAAA=</HashCode>
       <FileName>Line3D.cs</FileName>
     </TypeIdentifier>
+  </Struct>
+  <Struct Name="Artentus.Utils.Math.Rational" BaseTypeListCollapsed="true">
+    <Position X="36.25" Y="1" Width="3.25" />
+    <Members>
+      <Field Name="denominator" Hidden="true" />
+      <Field Name="errorNaN" Hidden="true" />
+      <Method Name="GetDigits" Hidden="true" />
+      <Field Name="numerator" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AJIgiEEAAZwAAB4E8AejAwFgAwCAAIgIIAEECHJAB6A=</HashCode>
+      <FileName>Rational.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Struct>
   <Interface Name="Artentus.Utils.Math.IVector">
     <Position X="2.75" Y="4.5" Width="2.25" />
@@ -206,7 +330,7 @@
     </TypeIdentifier>
   </Interface>
   <Interface Name="Artentus.Utils.Geometry.IPolygon">
-    <Position X="17.25" Y="3.5" Width="1.75" />
+    <Position X="20.5" Y="3.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAIAAAAAAAAAAAAAAAEAAAQAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IPolygon.cs</FileName>

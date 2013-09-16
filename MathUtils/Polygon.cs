@@ -223,7 +223,7 @@ namespace Artentus
                         return false;
 
                     Vector2 d = Center(first) - Center(second);
-                    if (Vector2.GetVectorProduct(d, minimumTranslationVector) > 0)
+                    if (Vector.DotProduct(d, minimumTranslationVector) > 0)
                         minimumTranslationVector = -minimumTranslationVector;
                     minimumTranslationVector = minOverlap * minimumTranslationVector;
 
