@@ -58,25 +58,25 @@ namespace Artentus
 
                 public override string ToString()
                 {
-                    var s = "{"; //öffnende Klammer
-
-                    for (int y = 0; y < RowCount; y++)
+                    var sb = new StringBuilder();
+                    sb.Append('{'); //öffnende Klammer
+                    for (int y = 0; y < RowCount; ++y)
                     {
-                        if (y > 0) //Zeilenumbruch nach jeder Zeile
-                            s += '\n';
+                        if (y != 0) //Zeilenumbruch nach jeder Zeile
+                            sb.Append(Environment.NewLine);
 
-                        for (int x = 0; x < ColumnCount; x++)
+                        for (int x = 0; x < ColumnCount; ++x)
                         {
-                            s += this[x, y].ToString();
+                            sb.Append(this[x, y]);
                             
-                            if (!(y == (RowCount - 1) && x == (ColumnCount -1)))
-                                s += ", ";
+                            if (!(y == (RowCount - 1) && x == (ColumnCount - 1)))
+                                sb.Append(", ");
                         }
                     }
 
-                    s += '}'; //schließende Klammer
+                    sb.Append('}'); //schließende Klammer
 
-                    return s;
+                    return sb.ToString();
                 }
 
                 /// <summary>
