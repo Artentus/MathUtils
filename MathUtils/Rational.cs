@@ -762,7 +762,7 @@ namespace Artentus
                     BigInteger gcd = BigInteger.GreatestCommonDivisor(num, denom);
                     Numerator = num / gcd;
                     Denominator = denom / gcd;
-                    if (Numerator < 0 ^ Denominator < 0)
+                    if (numerator < 0 ^ denominator < 0)
                         Numerator = -Numerator;
                 }
 

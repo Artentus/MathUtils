@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathUtils", "MathUtils\MathUtils.csproj", "{D2470552-33AB-4A15-8EBF-B37FA041D669}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "TestApp", "TestApp\TestApp.vbproj", "{0FE45878-38F6-4654-A0FE-2501276FA117}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp2", "TestApp2\TestApp2.csproj", "{188B6C4C-6018-4752-AE87-631FF9417806}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp3", "TestApp3\TestApp3.csproj", "{A3378D1F-C612-44E2-BFD6-1DCEC49B7FD7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Precalculator", "Precalculator\Precalculator.csproj", "{82BAC111-3161-4DDA-9318-06E46B141670}"
 EndProject
@@ -31,10 +31,6 @@ Global
 		{188B6C4C-6018-4752-AE87-631FF9417806}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{188B6C4C-6018-4752-AE87-631FF9417806}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{188B6C4C-6018-4752-AE87-631FF9417806}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A3378D1F-C612-44E2-BFD6-1DCEC49B7FD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A3378D1F-C612-44E2-BFD6-1DCEC49B7FD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A3378D1F-C612-44E2-BFD6-1DCEC49B7FD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A3378D1F-C612-44E2-BFD6-1DCEC49B7FD7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{82BAC111-3161-4DDA-9318-06E46B141670}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{82BAC111-3161-4DDA-9318-06E46B141670}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82BAC111-3161-4DDA-9318-06E46B141670}.Release|Any CPU.ActiveCfg = Release|Any CPU
